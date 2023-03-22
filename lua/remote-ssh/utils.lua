@@ -3,6 +3,18 @@
 
 local M = {}
 
+M.setup_sshfs = function()
+  local sshfs_folder = vim.fn.expand "$HOME" .. "/.sshfs"
+  if not vim.loop.fs_stat(sshfs_folder) then
+    vim.loop.fs_mkdir(sshfs_folder, tonumber("700", 8), function(err)
+      if err then
+        print("Error creating SSHFS folder:", err)
+        return
+      end
+    end)
+  end
+end
+
 M.parse_hosts_from_config = function(config)
   -- Open the SSH config file
   -- local file = io.open(os.getenv "HOME" .. "/.ssh/config", "r")
@@ -46,6 +58,18 @@ M.parse_hosts_from_config = function(config)
   return hosts
 
   -- print(vim.inspect(hosts))
+end
+
+M.change_directory = function(path)
+  -- Change the working directory of the Vim instance
+  vim.fn.execute("cd " .. path)
+
+  -- Update the nvim-tree to reflect the new directory
+  -- if vim.api.nvim_buf_get_name(0):match "nvim_tree" then
+  --   require("nvim-tree").change_dir(path)
+  -- end
+  require("nvim-tree.api").tree.change_root(path)
+  vim.cmd("NvimTreeRefresh")
 end
 
 return M

@@ -1,5 +1,3 @@
--- local main = require('telescope._extensions.project.main')
--- local utils = require('telescope._extensions.project.utils')
 local sorters = require "telescope.sorters"
 local state = require "telescope.actions.state"
 
@@ -8,12 +6,7 @@ local function host_selector(_, opts)
   if pcall(require, "telescope") then
     pickers = require "telescope.pickers"
     finders = require "telescope.finders"
-    -- previewers = require "telescope.previewers"
-
     actions = require "telescope.actions"
-    -- action_state = require "telescope.actions.state"
-    -- utils = require "telescope.utils"
-    -- conf = require("telescope.config").values
   else
     error "Cannot find telescope!"
   end
@@ -35,7 +28,7 @@ local function host_selector(_, opts)
           local selection = state.get_selected_entry()
           local host = hosts[selection[1]]
 
-          print(vim.inspect(host))
+          local_connections.mount_host(host)
         end)
         return true
       end,
