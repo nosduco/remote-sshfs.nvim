@@ -1,11 +1,42 @@
-local fn = vim.fn
-local connections = require("remote-sshfs.connections")
+local connections = require "remote-sshfs.connections"
 
 local M = {}
 
 local defaults = {
-  mnt_base_dir = vim.fn.expand "$HOME" .. "/mnt",
-  ssh_config_path = vim.fn.expand "$HOME" .. "/.ssh/config",
+  connections = {
+    ssh_config_path = vim.fn.expand "$HOME" .. "/.ssh/config",
+    custom_hosts = {},
+  },
+  mounts = {
+    base_dir = vim.fn.expand "$HOME" .. "/.sshfs/",
+    unmount_on_exit = true,
+  },
+  actions = {
+    on_connect = {
+      change_dir = true,
+      find_files = false,
+    },
+    on_disconnect = {
+      clean_mount_folders = false,
+    },
+    on_add = {},
+    on_edit = {},
+  },
+  ui = {
+    confirm = {
+      connect = false,
+      change_dir = false,
+    }
+  },
+  log = {
+    enable = false,
+    truncate = false,
+    types = {
+      all = false,
+      config = false,
+      sshfs = false,
+    }
+  }
 }
 
 M.setup = function(config)
@@ -13,9 +44,5 @@ M.setup = function(config)
 
   connections.init(config)
 end
-
--- M.list_hosts = function()
---   connections.hosts
--- end
 
 return M

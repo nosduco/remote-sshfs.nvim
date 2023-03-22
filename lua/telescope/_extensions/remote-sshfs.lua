@@ -1,7 +1,7 @@
 local sorters = require "telescope.sorters"
 local state = require "telescope.actions.state"
 
-local function host_selector(_, opts)
+local function connect(_)
   local pickers, finders, actions
   if pcall(require, "telescope") then
     pickers = require "telescope.pickers"
@@ -36,15 +36,13 @@ local function host_selector(_, opts)
     :find()
 end
 
-local opts = {}
-
 -- Initialize with telescope
 local present, telescope = pcall(require, "telescope")
 if present then
   return telescope.register_extension {
     exports = {
-      host_selector = function(_)
-        host_selector(_, opts)
+      connect = function(_)
+        connect(_)
       end,
     },
   }
