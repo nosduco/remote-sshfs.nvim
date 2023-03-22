@@ -1,4 +1,4 @@
--- local config = require "remote-ssh.config"
+-- local config = require "remote-sshfs.config"
 -- local a = require "plenary.async"
 
 local M = {}

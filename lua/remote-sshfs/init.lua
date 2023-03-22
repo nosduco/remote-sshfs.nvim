@@ -1,5 +1,5 @@
 local fn = vim.fn
-local connections = require("remote-ssh.connections")
+local connections = require("remote-sshfs.connections")
 
 local M = {}
 

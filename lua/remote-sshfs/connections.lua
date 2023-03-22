@@ -1,4 +1,4 @@
-local utils = require "remote-ssh.utils"
+local utils = require "remote-sshfs.utils"
 local hosts = {}
 
 local M = {}

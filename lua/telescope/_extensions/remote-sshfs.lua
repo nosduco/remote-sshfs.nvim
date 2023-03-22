@@ -11,7 +11,7 @@ local function host_selector(_, opts)
     error "Cannot find telescope!"
   end
 
-  local local_connections = require "remote-ssh.connections"
+  local local_connections = require "remote-sshfs.connections"
   local hosts = local_connections.list_hosts()
 
   pickers
