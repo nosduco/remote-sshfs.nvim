@@ -1,14 +1,14 @@
 local utils = require "remote-sshfs.utils"
+local handlers = require "remote-sshfs.handler"
+
 local hosts = {}
 local config = {}
+local sshfs_job_id = nil
 
 local M = {}
 
-local sshfs_job_id = nil
--- local mountpoint = nil
-
-M.init = function(plugin_config)
-  config = plugin_config
+M.setup = function(opts)
+  config = opts
   utils.setup_sshfs(config)
   hosts = utils.parse_hosts_from_config(config)
 end
@@ -18,14 +18,24 @@ M.list_hosts = function()
 end
 
 M.mount_host = function(host)
+  -- Setup new connection
+  local remote_host = host["HostName"]
+
+  -- Check confirm
+  -- TODO: Finish this
+  -- if config.ui.confirm.connect then
+  --   local prompt = "Connect to remote host (" .. remote_host .. ")?"
+  --
+  --   utils.check_confirm("Connect to remote host (" .. remote_host .. ")?") then
+  -- -- if config.ui.confirm.connect and not utils.check_confirm("Connect to remote host (" .. remote_host .. ") [Y/n]?") then
+  --   return
+  -- end
+
   -- If already connected, disconnect
   if sshfs_job_id then
     -- Kill the SSHFS process
     vim.fn.jobstop(sshfs_job_id)
   end
-
-  -- Setup new connection
-  local remote_host = host["HostName"]
 
   -- Create a directory for the remote host if it doesn't exist
   local mount_dir = config.mounts.base_dir .. remote_host
@@ -96,9 +106,19 @@ M.mount_host = function(host)
         elseif string.match(output, "Authenticated") then
           -- Succesfully connected
           print "Connected to host succesfully."
-          utils.change_directory(mount_dir)
           if config.actions.on_connect.change_dir then
-            utils.change_directory(mount_dir)
+            if config.ui.confirm.change_dir then
+              -- local confirm_change_dir = vim.fn.input "Change current directory to remote server [Y/n]?"
+              local prompt = "Change current directory to remote server?"
+              utils.prompt_yes_no(prompt, function(item_short)
+                utils.clear_prompt()
+                if item_short == "y" then
+                  utils.change_directory(mount_dir)
+                end
+              end)
+            else
+              utils.change_directory(mount_dir)
+            end
           end
           if config.actions.on_connect.find_files then
             utils.find_files()
@@ -116,10 +136,6 @@ M.mount_host = function(host)
   end
 
   start_job(false)
-
-  -- utils.change_directory(mount_dir)
-  -- vim.defer_fn(utils.change_directory(mount_dir), 1000)
-  -- utils.change_directory(mount_dir)
 end
 
 M.unmount_host = function()

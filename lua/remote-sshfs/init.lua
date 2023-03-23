@@ -1,8 +1,7 @@
-local connections = require "remote-sshfs.connections"
-
 local M = {}
 
-local defaults = {
+local default_opts = {
+  select_prompts = false,
   connections = {
     ssh_config_path = vim.fn.expand "$HOME" .. "/.ssh/config",
     custom_hosts = {},
@@ -11,7 +10,7 @@ local defaults = {
     base_dir = vim.fn.expand "$HOME" .. "/.sshfs/",
     unmount_on_exit = true,
   },
-  actions = {
+  handlers = {
     on_connect = {
       change_dir = true,
       find_files = false,
@@ -26,7 +25,7 @@ local defaults = {
     confirm = {
       connect = false,
       change_dir = false,
-    }
+    },
   },
   log = {
     enable = false,
@@ -35,14 +34,27 @@ local defaults = {
       all = false,
       config = false,
       sshfs = false,
-    }
-  }
+    },
+  },
 }
 
-M.setup = function(config)
-  config = config and vim.tbl_deep_extend("force", defaults, config) or defaults
+M.setup_commands = function() end
 
-  connections.init(config)
+M.setup_auto_commands = function() end
+
+M.validate_options = function(opts) end
+
+M.setup = function(config)
+  M.validate_options(config)
+
+  local opts = config and vim.tbl_deep_extend("force", default_opts, config) or default_opts
+
+  require("remote-sshfs.connections").setup(opts)
+  require("remote-sshfs.utils").setup(opts)
+  require("remote-sshfs.handler").setup(opts)
+
+  M.setup_commands()
+  M.setup_auto_commands()
 end
 
 return M
