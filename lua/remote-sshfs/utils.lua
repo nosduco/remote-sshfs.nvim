@@ -12,6 +12,20 @@ M.setup_sshfs = function(config)
   end
 end
 
+M.setup_mount_dir = function(mount_dir, callback)
+  if not vim.loop.fs_stat(mount_dir) then
+    -- TODO: correct perms
+    local success = vim.loop.fs_mkdir(mount_dir, tonumber("700", 8))
+    if not success then
+      print("Error creating mount directory (" .. mount_dir .. ").")
+    else
+      callback()
+    end
+  else
+    callback()
+  end
+end
+
 M.parse_hosts_from_config = function(config)
   -- Open the SSH config file
   local ssh_config = vim.fn.expand(config.connections.ssh_config_path)

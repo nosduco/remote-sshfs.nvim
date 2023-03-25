@@ -28,7 +28,7 @@ local function connect(_)
           local selection = state.get_selected_entry()
           local host = hosts[selection[1]]
 
-          local_connections.mount_host(host)
+          local_connections.connect(host)
         end)
         return true
       end,

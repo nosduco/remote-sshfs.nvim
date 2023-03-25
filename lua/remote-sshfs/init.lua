@@ -1,8 +1,11 @@
 local M = {}
 
 local default_opts = {
-  select_prompts = false,
   connections = {
+    ssh_configs = {
+
+    },
+    -- Replace the line before with the above type of configuration
     ssh_config_path = vim.fn.expand "$HOME" .. "/.ssh/config",
     custom_hosts = {},
   },
@@ -22,8 +25,9 @@ local default_opts = {
     on_edit = {},
   },
   ui = {
+    select_prompts = false,
     confirm = {
-      connect = false,
+      connect = true,
       change_dir = false,
     },
   },
