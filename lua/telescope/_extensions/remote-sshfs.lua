@@ -10,9 +10,10 @@ local function build_host_preview(hosts, name)
   local lines = {}
   local host = hosts[name]
 
+  table.insert(lines, "# Config: " .. host["Config"])
   table.insert(lines, "Host " .. host["HostName"])
   for key, value in pairs(host) do
-    if key ~= "name" then
+    if key ~= "name" and key ~= "Config" then
       table.insert(lines, string.format("\t%s %s", key, value))
     end
   end

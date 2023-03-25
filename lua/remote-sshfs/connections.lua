@@ -10,7 +10,7 @@ local M = {}
 M.setup = function(opts)
   config = opts
   utils.setup_sshfs(config)
-  hosts = utils.parse_hosts_from_config(config)
+  hosts = utils.parse_hosts_from_configs(config)
 end
 
 M.list_hosts = function()

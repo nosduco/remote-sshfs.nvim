@@ -3,7 +3,9 @@ local M = {}
 local default_opts = {
   connections = {
     ssh_configs = {
-
+      vim.fn.expand "$HOME" .. "/.ssh/config",
+      "/etc/ssh/ssh_config",
+      -- "/path/to/custom/ssh_config"
     },
     -- Replace the line before with the above type of configuration
     ssh_config_path = vim.fn.expand "$HOME" .. "/.ssh/config",
