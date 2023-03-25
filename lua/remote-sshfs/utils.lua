@@ -1,3 +1,5 @@
+local log = require "remote-sshfs.log"
+
 local M = {}
 
 M.setup_sshfs = function(config)
@@ -12,12 +14,33 @@ M.setup_sshfs = function(config)
   end
 end
 
+M.file_exists = function(path)
+  local _, error = vim.loop.fs_stat(path)
+  return error == nil
+end
+
 M.setup_mount_dir = function(mount_dir, callback)
-  if not vim.loop.fs_stat(mount_dir) then
-    -- TODO: correct perms
+  log.line("util", "Setting up mount directory " .. mount_dir)
+  if not M.file_exists(mount_dir) then
+    log.line("util", "Creating mount directory " .. mount_dir)
     local success = vim.loop.fs_mkdir(mount_dir, tonumber("700", 8))
     if not success then
       print("Error creating mount directory (" .. mount_dir .. ").")
+    else
+      callback()
+    end
+  else
+    callback()
+  end
+end
+
+M.cleanup_mount_dir = function(mount_dir, callback)
+  log.line("util", "Cleaning up mount directory " .. mount_dir)
+  if M.file_exists(mount_dir) then
+    log.line("util", "Removing mount directory " .. mount_dir)
+    local success = vim.loop.fs_rmdir(mount_dir)
+    if not success then
+      print("Error cleaning up mount directory (" .. mount_dir .. ").")
     else
       callback()
     end
@@ -91,6 +114,7 @@ end
 M.change_directory = function(path)
   -- Change the working directory of the Vim instance
   vim.fn.execute("cd " .. path)
+  vim.notify("Directory changed to " .. path)
 end
 
 M.find_files = function()

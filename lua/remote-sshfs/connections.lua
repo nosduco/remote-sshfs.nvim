@@ -1,5 +1,6 @@
 local utils = require "remote-sshfs.utils"
 local handler = require "remote-sshfs.handler"
+local log = require "remote-sshfs.log"
 
 local hosts = {}
 local config = {}
@@ -33,24 +34,31 @@ M.connect = function(host)
   end
 end
 
-M.init_host = function(host)
-  -- Create/confirm mount directory
-  local remote_host = host["HostName"]
-  local mount_dir = config.mounts.base_dir .. remote_host
-  utils.setup_mount_dir(mount_dir, function()
-    M.mount_host(host, mount_dir)
-  end)
-end
-
-M.mount_host = function(host, mount_dir)
-  -- Setup new connection
-  local remote_host = host["HostName"]
-
+M.init_host = function(host, ask_pass)
   -- If already connected, disconnect
   if sshfs_job_id then
     -- Kill the SSHFS process
     vim.fn.jobstop(sshfs_job_id)
   end
+
+  -- Create/confirm mount directory
+  local remote_host = host["HostName"]
+  local mount_dir = config.mounts.base_dir .. remote_host
+
+  if not ask_pass then
+    utils.setup_mount_dir(mount_dir, function()
+      M.mount_host(host, mount_dir, ask_pass)
+    end)
+  else
+    M.mount_host(host, mount_dir, ask_pass)
+  end
+end
+
+M.mount_host = function(host, mount_dir, ask_pass)
+  -- Setup new connection
+  local remote_host = host["HostName"]
+
+  -- TODO: Handle SSH CONFIG LogLevel, Compression, IdentityFile, Wild card hosts.
 
   -- Construct the SSHFS command
   local sshfs_cmd = "sshfs -o LOGLEVEL=VERBOSE -o ConnectTimeout=5 "
@@ -77,45 +85,43 @@ M.mount_host = function(host, mount_dir)
 
   sshfs_cmd = sshfs_cmd .. mount_dir
 
-  local function start_job(ask_pass)
+  local function start_job()
     local sshfs_cmd_local = sshfs_cmd
-    -- Kill current job (if one exists)
-    if sshfs_job_id then
-      -- Kill the SSHFS process
-      vim.fn.jobstop(sshfs_job_id)
-    end
 
+    -- If password required
     if ask_pass then
       local password = vim.fn.inputsecret "Enter password for host: "
       sshfs_cmd_local = "echo " .. password .. " | " .. sshfs_cmd .. " -o password_stdin"
     end
 
-    print "Connecting to host..."
+    print("Connecting to host (" .. remote_host .. ")...")
+    local skip_clean = false
     sshfs_job_id = vim.fn.jobstart(sshfs_cmd_local, {
       cwd = mount_dir,
       on_stdout = function(_, data)
         handler.sshfs_wrapper(data, mount_dir, function(event)
           if event == "ask_pass" then
-            start_job(true)
+            skip_clean = true
+            M.init_host(host, true)
           end
         end)
       end,
       on_stderr = function(_, data)
         handler.sshfs_wrapper(data, mount_dir, function(event)
           if event == "ask_pass" then
-            start_job(true)
+            skip_clean = true
+            M.init_host(host, true)
           end
         end)
       end,
-      on_exit = function()
-        handler.on_exit_handler(mount_dir, function()
+      on_exit = function(_, _, data)
+        handler.on_exit_handler(data, mount_dir, skip_clean, function()
           sshfs_job_id = nil
         end)
       end,
     })
   end
-
-  start_job(false)
+  start_job()
 end
 
 M.unmount_host = function()

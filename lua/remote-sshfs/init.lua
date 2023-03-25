@@ -58,6 +58,7 @@ M.setup = function(config)
   require("remote-sshfs.connections").setup(opts)
   require("remote-sshfs.utils").setup(opts)
   require("remote-sshfs.handler").setup(opts)
+  require("remote-sshfs.log").setup(opts)
 
   M.setup_commands()
   M.setup_auto_commands()
