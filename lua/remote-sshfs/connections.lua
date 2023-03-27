@@ -20,7 +20,7 @@ end
 
 M.connect = function(host)
   -- Initialize host variables
-  local remote_host = host["HostName"]
+  local remote_host = host["Name"]
   if config.ui.confirm.connect then
     local prompt = "Connect to remote host (" .. remote_host .. ")?"
     utils.prompt_yes_no(prompt, function(item_short)
@@ -42,7 +42,7 @@ M.init_host = function(host, ask_pass)
   end
 
   -- Create/confirm mount directory
-  local remote_host = host["HostName"]
+  local remote_host = host["Name"]
   local mount_dir = config.mounts.base_dir .. remote_host
 
   if not ask_pass then
@@ -56,7 +56,7 @@ end
 
 M.mount_host = function(host, mount_dir, ask_pass)
   -- Setup new connection
-  local remote_host = host["HostName"]
+  local remote_host = host["Name"]
 
   -- TODO: Handle SSH CONFIG LogLevel, Compression, IdentityFile, Wild card hosts.
 

@@ -7,9 +7,6 @@ local default_opts = {
       "/etc/ssh/ssh_config",
       -- "/path/to/custom/ssh_config"
     },
-    -- Replace the line before with the above type of configuration
-    ssh_config_path = vim.fn.expand "$HOME" .. "/.ssh/config",
-    custom_hosts = {},
   },
   mounts = {
     base_dir = vim.fn.expand "$HOME" .. "/.sshfs/",

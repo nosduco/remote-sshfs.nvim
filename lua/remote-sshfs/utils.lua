@@ -54,7 +54,7 @@ M.parse_hosts_from_configs = function(config)
   local current_host = nil
 
   -- Iterate through all ssh config files in config
-  for i, path in ipairs(config.connections.ssh_configs) do
+  for _, path in ipairs(config.connections.ssh_configs) do
     -- Open the SSH config file
     local current_config = vim.fn.expand(path)
     for line in io.lines(current_config) do
@@ -66,6 +66,7 @@ M.parse_hosts_from_configs = function(config)
           current_host = host_name
           hosts[current_host] = {}
           hosts[current_host]["Config"] = path
+          hosts[current_host]["Name"] = current_host
         else
           -- If the line is not a Host entry, but there is a current host, add the line to its attributes
           if current_host then
