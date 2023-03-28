@@ -41,15 +41,18 @@ local default_opts = {
   },
 }
 
-M.setup_commands = function() end
-
-M.setup_auto_commands = function() end
-
-M.validate_options = function(opts) end
+M.setup_commands = function()
+  vim.api.nvim_create_user_command("RemoteSSHFSConnect", "Telescope remote-sshfs connect", {})
+  vim.api.nvim_create_user_command("RemoteSSHFSEdit", "Telescope remote-sshfs edit", {})
+  vim.api.nvim_create_user_command("RemoteSSHFSReload", function()
+    require("remote-sshfs.connections").reload()
+  end, {})
+  vim.api.nvim_create_user_command("RemoteSSHFSDisconnect", function() end, {
+    require("remote-sshfs.connections").unmount_host(),
+  })
+end
 
 M.setup = function(config)
-  M.validate_options(config)
-
   local opts = config and vim.tbl_deep_extend("force", default_opts, config) or default_opts
 
   require("remote-sshfs.connections").setup(opts)

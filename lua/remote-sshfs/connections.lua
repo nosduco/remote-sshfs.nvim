@@ -1,9 +1,9 @@
 local utils = require "remote-sshfs.utils"
 local handler = require "remote-sshfs.handler"
-local log = require "remote-sshfs.log"
 
-local hosts = {}
 local config = {}
+local hosts = {}
+local ssh_configs = {}
 local sshfs_job_id = nil
 
 local M = {}
@@ -11,11 +11,21 @@ local M = {}
 M.setup = function(opts)
   config = opts
   utils.setup_sshfs(config)
-  hosts = utils.parse_hosts_from_configs(config)
+  ssh_configs = config.connections.ssh_configs
+  hosts = utils.parse_hosts_from_configs(ssh_configs)
 end
 
 M.list_hosts = function()
   return hosts
+end
+
+M.list_ssh_configs = function()
+  return ssh_configs
+end
+
+M.reload = function()
+  hosts = utils.parse_hosts_from_configs(ssh_configs)
+  vim.notify "Reloaded!"
 end
 
 M.connect = function(host)

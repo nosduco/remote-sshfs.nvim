@@ -2,6 +2,7 @@ local sorters = require "telescope.sorters"
 local state = require "telescope.actions.state"
 local previewers = require "telescope.previewers"
 
+-- Build virtualized host file from parsed hosts from plugin
 local function build_host_preview(hosts, name)
   if name == "" or nil then
     return {}
@@ -22,6 +23,7 @@ local function build_host_preview(hosts, name)
   return lines
 end
 
+-- Telescope action to select a host to connect to
 local function connect(_)
   local pickers, finders, actions
   if pcall(require, "telescope") then
@@ -32,9 +34,10 @@ local function connect(_)
     error "Cannot find telescope!"
   end
 
-  local local_connections = require "remote-sshfs.connections"
-  local hosts = local_connections.list_hosts()
+  local connections = require "remote-sshfs.connections"
+  local hosts = connections.list_hosts()
 
+  -- Build preivewer and set highlighting for each to "sshconfig"
   local previewer = previewers.new_buffer_previewer {
     define_preview = function(self, entry)
       local lines = build_host_preview(hosts, entry.value)
@@ -43,6 +46,7 @@ local function connect(_)
     end,
   }
 
+  -- Build picker to run connect function when a host is selected
   pickers
     .new(_, {
       prompt_title = "Connect to remote host",
@@ -58,10 +62,52 @@ local function connect(_)
           local selection = state.get_selected_entry()
           local host = hosts[selection[1]]
 
-          local_connections.connect(host)
+          connections.connect(host)
         end)
         return true
       end,
+    })
+    :find()
+end
+
+-- Telescope action to select ssh config file to edit
+local function edit_config(_)
+  local pickers, finders
+  if pcall(require, "telescope") then
+    pickers = require "telescope.pickers"
+    finders = require "telescope.finders"
+    previewers = require "telescope.previewers"
+  else
+    error "Cannot find telescope!"
+  end
+
+  local connections = require "remote-sshfs.connections"
+  local ssh_configs = connections.list_ssh_configs()
+
+  pickers
+    .new(_, {
+      prompt_title = "Choose SSH config file to edit",
+      previewer = previewers.new_buffer_previewer {
+        -- Set preview highlights to sshconfig for each file
+        define_preview = function(self, entry)
+          if entry == nil or entry.value == nil then
+            return
+          end
+
+          local file_path = entry.value
+          local bufnr = self.state.bufnr
+
+          vim.api.nvim_buf_set_option(bufnr, "filetype", "sshconfig")
+          require("telescope.previewers.utils").highlighter(bufnr, "sshconfig")
+
+          local lines = vim.fn.readfile(file_path)
+          vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+        end,
+      },
+      finder = finders.new_table {
+        results = ssh_configs,
+      },
+      sorter = sorters.get_generic_fuzzy_sorter(),
     })
     :find()
 end
@@ -73,6 +119,9 @@ if present then
     exports = {
       connect = function(_)
         connect(_)
+      end,
+      edit = function(_)
+        edit_config(_)
       end,
     },
   }

@@ -49,12 +49,12 @@ M.cleanup_mount_dir = function(mount_dir, callback)
   end
 end
 
-M.parse_hosts_from_configs = function(config)
+M.parse_hosts_from_configs = function(ssh_configs)
   local hosts = {}
   local current_host = nil
 
   -- Iterate through all ssh config files in config
-  for _, path in ipairs(config.connections.ssh_configs) do
+  for _, path in ipairs(ssh_configs) do
     -- Open the SSH config file
     local current_config = vim.fn.expand(path)
     for line in io.lines(current_config) do
