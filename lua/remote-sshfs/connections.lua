@@ -1,4 +1,5 @@
 local utils = require "remote-sshfs.utils"
+local ui = require "remote-sshfs.ui"
 local handler = require "remote-sshfs.handler"
 
 local config = {}
@@ -33,8 +34,8 @@ M.connect = function(host)
   local remote_host = host["Name"]
   if config.ui.confirm.connect then
     local prompt = "Connect to remote host (" .. remote_host .. ")?"
-    utils.prompt_yes_no(prompt, function(item_short)
-      utils.clear_prompt()
+    ui.prompt_yes_no(prompt, function(item_short)
+      ui.clear_prompt()
       if item_short == "y" then
         M.init_host(host)
       end

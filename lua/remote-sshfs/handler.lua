@@ -1,4 +1,5 @@
 local utils = require "remote-sshfs.utils"
+local ui = require "remote-sshfs.ui"
 local log = require "remote-sshfs.log"
 
 local M = {}
@@ -38,8 +39,8 @@ M.authenticated_handler = function(mount_dir)
   if M.change_dir then
     if M.confirm_change_dir then
       local prompt = "Change current directory to remote server?"
-      utils.prompt_yes_no(prompt, function(item_short)
-        utils.clear_prompt()
+      ui.prompt_yes_no(prompt, function(item_short)
+        ui.clear_prompt()
         if item_short == "y" then
           utils.change_directory(mount_dir)
         end
