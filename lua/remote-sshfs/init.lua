@@ -28,7 +28,7 @@ local default_opts = {
     on_edit = {},
   },
   ui = {
-    select_prompts = false,
+    select_prompts = false, -- not yet implemented
     confirm = {
       connect = true,
       change_dir = false,
