@@ -110,7 +110,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
       sshfs_cmd_local = "echo " .. password .. " | " .. sshfs_cmd .. " -o password_stdin"
     end
 
-    print("Connecting to host (" .. remote_host .. ")...")
+    vim.notify("Connecting to host (" .. remote_host .. ")...")
     local skip_clean = false
     sshfs_job_id = vim.fn.jobstart(sshfs_cmd_local, {
       cwd = mount_dir,

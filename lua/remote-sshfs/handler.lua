@@ -15,7 +15,7 @@ M.sshfs_wrapper = function(data, mount_dir, callback)
   elseif string.match(output, "Authenticated") then
     M.authenticated_handler(mount_dir)
   else
-    print("Connection failed: " .. string.gsub(tostring(output), "\r\n", ""))
+    vim.notify("Connection failed: " .. string.gsub(tostring(output), "\r\n", ""))
   end
   -- TODO: Add mount point handler (and other handlers)
 end
@@ -34,7 +34,7 @@ M.askpass_handler = function(callback)
 end
 
 M.authenticated_handler = function(mount_dir)
-  print "Connected to host succesfully."
+  vim.notify "Connected to host succesfully."
 
   if M.change_dir then
     if M.confirm_change_dir then

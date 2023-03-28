@@ -39,7 +39,8 @@ local default_opts = {
     truncate = false,
     types = {
       all = false,
-      config = false,
+      util = false,
+      handler = false,
       sshfs = false,
     },
   },
