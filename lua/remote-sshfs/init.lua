@@ -9,7 +9,7 @@ local default_opts = {
     },
     sshfs_args = {
       "-o reconnect",
-      "-o ConnectTimeout=5"
+      "-o ConnectTimeout=5",
     },
   },
   mounts = {
@@ -47,8 +47,13 @@ local default_opts = {
 }
 
 M.setup_commands = function()
-  vim.api.nvim_create_user_command("RemoteSSHFSConnect", "Telescope remote-sshfs connect", {})
-  vim.api.nvim_create_user_command("RemoteSSHFSEdit", "Telescope remote-sshfs edit", {})
+  -- Create commands to connect/edit/reload/disconnect
+  vim.api.nvim_create_user_command("RemoteSSHFSConnect", function()
+    require("telescope").extensions["remote-sshfs"].connect()
+  end, {})
+  vim.api.nvim_create_user_command("RemoteSSHFSEdit", function()
+    require("telescope").extensions["remote-sshfs"].edit()
+  end, {})
   vim.api.nvim_create_user_command("RemoteSSHFSReload", function()
     require("remote-sshfs.connections").reload()
   end, {})
