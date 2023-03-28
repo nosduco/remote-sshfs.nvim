@@ -7,6 +7,10 @@ local default_opts = {
       "/etc/ssh/ssh_config",
       -- "/path/to/custom/ssh_config"
     },
+    sshfs_args = {
+      "-o reconnect",
+      "-o ConnectTimeout=5"
+    },
   },
   mounts = {
     base_dir = vim.fn.expand "$HOME" .. "/.sshfs/",

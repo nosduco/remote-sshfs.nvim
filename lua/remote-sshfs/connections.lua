@@ -5,6 +5,7 @@ local handler = require "remote-sshfs.handler"
 local config = {}
 local hosts = {}
 local ssh_configs = {}
+local sshfs_args = {}
 local sshfs_job_id = nil
 
 local M = {}
@@ -13,6 +14,7 @@ M.setup = function(opts)
   config = opts
   utils.setup_sshfs(config)
   ssh_configs = config.connections.ssh_configs
+  sshfs_args = config.connections.sshfs_args
   hosts = utils.parse_hosts_from_configs(ssh_configs)
 end
 
@@ -69,10 +71,13 @@ M.mount_host = function(host, mount_dir, ask_pass)
   -- Setup new connection
   local remote_host = host["Name"]
 
-  -- TODO: Handle SSH CONFIG LogLevel, Compression, IdentityFile, Wild card hosts.
-
   -- Construct the SSHFS command
-  local sshfs_cmd = "sshfs -o LOGLEVEL=VERBOSE -o ConnectTimeout=5 "
+  local sshfs_cmd = "sshfs -o LOGLEVEL=VERBOSE "
+
+  -- Add custom SSHFS args from config
+  for _, value in ipairs(sshfs_args) do
+    sshfs_cmd = sshfs_cmd .. value .. " "
+  end
 
   if config.mounts.unmount_on_exit then
     sshfs_cmd = sshfs_cmd .. "-f "
