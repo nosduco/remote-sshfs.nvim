@@ -5,7 +5,7 @@ break or change frequently!** 🚧
 
 Explore, edit, and develop on a remote machine via SSHFS with Neovim. Loosely based on the VSCode extension [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
 
-INSERT GIF HERE
+![Demo](https://github.com/nosduco/remote-sshfs.nvim/blob/main/demo.gif)
 
 ## Table of Contents
 - [Getting Started](#getting-started)
