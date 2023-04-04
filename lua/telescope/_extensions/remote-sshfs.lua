@@ -177,7 +177,7 @@ local function find_files(opts)
   end)()
 
   if not find_command then
-    vim.notify "Remote host does not support any available find commands (rg, fd, fdfind, where). Please install and try again."
+    vim.notify "Remote host does not support any available find commands (rg, fd, fdfind, where)."
     return
   end
 

@@ -60,10 +60,10 @@ M.setup_commands = function()
     require("remote-sshfs.connections").unmount_host()
   end, {})
   vim.api.nvim_create_user_command("RemoteSSHFSFindFiles", function()
-    require("telescope").extensions["remote-sshfs"].find_files({})
+    require("telescope").extensions["remote-sshfs"].find_files {}
   end, {})
   vim.api.nvim_create_user_command("RemoteSSHFSLiveGrep", function()
-    require("telescope").extensions["remote-sshfs"].live_grep({})
+    require("telescope").extensions["remote-sshfs"].live_grep {}
   end, {})
 end
 
