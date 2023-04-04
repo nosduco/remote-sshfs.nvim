@@ -96,7 +96,7 @@ With this plugin you can:
 - Connect and mount a remote host via SSHFS using the `:RemoteSSHFSConnect` command. This command will trigger a picker to appear where you can select hosts that have been parsed from your SSH config files. Upon selecting a host, remote-sshfs will mount the host (by default at `~/.sshfs/<hostname>`) and change the current working directory to that folder. Additionally, by default, once vim closes the mount will be automatically unmounted and cleaned.
 - Disconnect from a remote host that you're current connected to using the `:RemoteSSHFSDisconnect` command
 - Select a SSH config to edit via a picker by using the `:RemoteSSHFSEdit` command
-- Utilize Telescope Find Files functionality completely remote via SSH by using the `:RemoteSSHFindFiles` command
+- Utilize Telescope Find Files functionality completely remote via SSH by using the `:RemoteSSHFindFiles` command (<strong>Note: the remote server must have either [ripgrep](https://github.com/BurntSushi/ripgrep), [fd/fdfind](https://github.com/sharkdp/fd), or the where command</strong>)
 - Utilize Telescope Live Grep functionality completely remote via SSH by using the `:RemoteSSHLiveGrep` command (<strong>Note: the remote server must have [ripgrep](https://github.com/BurntSushi/ripgrep) installed</strong>)
 
 <strong>Note:</strong> Currently only parsing hosts is supported, the ability to pass a host via the above commands will eventually be added
