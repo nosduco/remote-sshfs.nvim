@@ -114,6 +114,12 @@ local function edit_config(_)
     :find()
 end
 
+local function command_exists_on_remote(command, server)
+  local ssh_cmd = string.format('ssh %s "which %s"', server, command)
+  local result = vim.fn.system(ssh_cmd)
+  return result ~= ""
+end
+
 -- Remote find_files implementation
 local function find_files(opts)
   local connections
@@ -152,7 +158,28 @@ local function find_files(opts)
   -- Setup
   local mount_point = opts.mount_point or connections.get_current_mount_point()
   local current_host = connections.get_current_host()
-  local find_command = { "ssh", current_host["Name"], "-C", "fdfind", "--type", "f", "--color", "never" }
+
+  local find_command = (function()
+    if opts.find_command then
+      if type(opts.find_command) == "function" then
+        return opts.find_command(opts)
+      end
+      return opts.find_command
+    elseif command_exists_on_remote("rg", current_host["Name"]) then
+      return { "ssh", current_host["Name"], "-C", "rg", "--files", "--color", "never" }
+    elseif command_exists_on_remote("fd", current_host["Name"]) then
+      return { "ssh", current_host["Name"], "fd", "--type", "f", "--color", "never" }
+    elseif command_exists_on_remote("fdfind", current_host["Name"]) then
+      return { "ssh", current_host["Name"], "fdfind", "--type", "f", "--color", "never" }
+    elseif command_exists_on_remote("where", current_host["Name"]) then
+      return { "ssh", current_host["Name"], "where", "/r", ".", "*" }
+    end
+  end)()
+
+  if not find_command then
+    vim.notify "Remote host does not support any available find commands (rg, fd, fdfind, where). Please install and try again."
+    return
+  end
 
   -- Core find_files functionality
   local command = find_command[3]
