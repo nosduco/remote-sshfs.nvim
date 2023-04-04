@@ -7,6 +7,7 @@ local hosts = {}
 local ssh_configs = {}
 local sshfs_args = {}
 local sshfs_job_id = nil
+local mount_point = nil
 
 local M = {}
 
@@ -24,6 +25,10 @@ end
 
 M.list_ssh_configs = function()
   return ssh_configs
+end
+
+M.get_current_mount_point = function()
+  return mount_point
 end
 
 M.reload = function()
@@ -112,6 +117,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
 
     vim.notify("Connecting to host (" .. remote_host .. ")...")
     local skip_clean = false
+    mount_point = mount_dir .. "/"
     sshfs_job_id = vim.fn.jobstart(sshfs_cmd_local, {
       cwd = mount_dir,
       on_stdout = function(_, data)
@@ -145,6 +151,7 @@ M.unmount_host = function()
     -- Kill the SSHFS process
     vim.fn.jobstop(sshfs_job_id)
   end
+  mount_point = nil
 end
 
 return M

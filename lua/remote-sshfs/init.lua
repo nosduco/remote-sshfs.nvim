@@ -57,9 +57,20 @@ M.setup_commands = function()
   vim.api.nvim_create_user_command("RemoteSSHFSReload", function()
     require("remote-sshfs.connections").reload()
   end, {})
-  vim.api.nvim_create_user_command("RemoteSSHFSDisconnect", function() end, {
-    require("remote-sshfs.connections").unmount_host(),
-  })
+  vim.api.nvim_create_user_command("RemoteSSHFSDisconnect", function()
+    require("remote-sshfs.connections").unmount_host()
+  end, {})
+
+  vim.api.nvim_create_user_command("RemoteSSHFSFindFiles", function()
+    require("telescope").extensions["remote-sshfs"].find_files({})
+  end, {})
+
+  -- vim.api.nvim_create_user_command("RemoteSSHFSTestLG", function()
+  --   local builtin = require "telescope.builtin"
+  --   builtin.live_grep {
+  --     find_command = { "ssh", "tux", "-C", "fdfind", "--type", "f", "--color", "never" },
+  --   }
+  -- end, {})
 end
 
 M.setup = function(config)
