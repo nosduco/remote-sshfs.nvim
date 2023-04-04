@@ -19,6 +19,13 @@ M.setup = function(opts)
   hosts = utils.parse_hosts_from_configs(ssh_configs)
 end
 
+M.is_connected = function()
+  if sshfs_job_id and mount_point then
+    return true
+  end
+  return false
+end
+
 M.list_hosts = function()
   return hosts
 end
