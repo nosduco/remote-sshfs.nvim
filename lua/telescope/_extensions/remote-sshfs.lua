@@ -124,7 +124,7 @@ local function find_files(opts)
   end
 
   -- Check that a connection exists
-  if not connections.get_current_mount_point() then
+  if not connections.is_connected() then
     vim.notify "You are not currently connected to a remote host."
     return
   end
@@ -150,8 +150,9 @@ local function find_files(opts)
   end
 
   -- Setup
-  local find_command = { "ssh", "tux", "-C", "fdfind", "--type", "f", "--color", "never" }
   local mount_point = opts.mount_point or connections.get_current_mount_point()
+  local current_host = connections.get_current_host()
+  local find_command = { "ssh", current_host["Name"], "-C", "fdfind", "--type", "f", "--color", "never" }
 
   -- Core find_files functionality
   local command = find_command[1]
@@ -224,10 +225,10 @@ local function find_files(opts)
   local cwd = opts.cwd or vim.loop.cwd()
   pickers
     .new(opts, {
-      prompt_title = "Find Files",
+      prompt_title = "Remote Find Files",
       finder = finders.new_oneshot_job(find_command, opts),
       previewer = previewers.new_buffer_previewer {
-        title = "File Preview",
+        title = "Remote File Preview",
         dyn_title = function(_, entry)
           return Path:new(from_entry.path(entry, false, false)):normalize(cwd)
         end,
@@ -295,7 +296,7 @@ local function live_grep(opts)
   end
 
   -- Check that a connection exists
-  if not connections.get_current_mount_point() then
+  if not connections.is_connected() then
     vim.notify "You are not currently connected to a remote host."
     return
   end
@@ -322,10 +323,11 @@ local function live_grep(opts)
   end
 
   -- Setup
+  local current_host = connections.get_current_host()
   local mount_point = opts.mount_point or connections.get_current_mount_point()
   local vimgrep_arguments = {
     "ssh",
-    "tux",
+    current_host["Name"],
     "-C",
     "rg",
     "--color=never",
@@ -393,11 +395,11 @@ local function live_grep(opts)
 
   pickers
     .new(opts, {
-      prompt_title = "Live Grep",
+      prompt_title = "Remote Live Grep",
       finder = live_grepper,
       -- previewer = conf.grep_previewer(opts),
       previewer = previewers.new_buffer_previewer {
-        title = "Grep Preview",
+        title = "Remote Grep Preview",
         dyn_title = function(_, entry)
           return Path:new(from_entry.path(entry, false, false)):normalize(opts.cwd)
         end,
