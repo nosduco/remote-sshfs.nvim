@@ -135,7 +135,6 @@ require('remote-sshfs').setup{
   handlers = {
     on_connect = {
       change_dir = true, -- when connected change vim working directory to mount point
-      find_files = false, -- when connected, run telescope find files
     },
     on_disconnect = {
       clean_mount_folders = false, -- remove mount point folder on disconnect/unmount

@@ -88,8 +88,4 @@ M.change_directory = function(path)
   vim.notify("Directory changed to " .. path)
 end
 
-M.find_files = function()
-  vim.cmd ":Telescope find_files"
-end
-
 return M

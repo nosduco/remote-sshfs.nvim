@@ -19,7 +19,6 @@ local default_opts = {
   handlers = {
     on_connect = {
       change_dir = true,
-      find_files = false,
     },
     on_disconnect = {
       clean_mount_folders = false,
