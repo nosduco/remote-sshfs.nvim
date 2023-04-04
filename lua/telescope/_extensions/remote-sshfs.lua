@@ -235,7 +235,6 @@ local function find_files(opts)
         table.insert(find_command, 5, v)
       end
     end
-    -- TODO: Add error logging here
   end
 
   if opts.cwd then
@@ -424,7 +423,6 @@ local function live_grep(opts)
     .new(opts, {
       prompt_title = "Remote Live Grep",
       finder = live_grepper,
-      -- previewer = conf.grep_previewer(opts),
       previewer = previewers.new_buffer_previewer {
         title = "Remote Grep Preview",
         dyn_title = function(_, entry)
