@@ -65,6 +65,10 @@ M.setup_commands = function()
     require("telescope").extensions["remote-sshfs"].find_files({})
   end, {})
 
+  vim.api.nvim_create_user_command("RemoteSSHFSLiveGrep", function()
+    require("telescope").extensions["remote-sshfs"].live_grep({})
+  end, {})
+
   -- vim.api.nvim_create_user_command("RemoteSSHFSTestLG", function()
   --   local builtin = require "telescope.builtin"
   --   builtin.live_grep {
