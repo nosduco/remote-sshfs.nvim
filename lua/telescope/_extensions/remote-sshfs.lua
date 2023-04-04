@@ -155,7 +155,7 @@ local function find_files(opts)
   local find_command = { "ssh", current_host["Name"], "-C", "fdfind", "--type", "f", "--color", "never" }
 
   -- Core find_files functionality
-  local command = find_command[1]
+  local command = find_command[3]
   local hidden = opts.hidden
   local no_ignore = opts.no_ignore
   local no_ignore_parent = opts.no_ignore_parent
@@ -196,16 +196,16 @@ local function find_files(opts)
       find_command = flatten(find_command)
     end
     if follow then
-      table.insert(find_command, 2, "-L")
+      table.insert(find_command, 5, "-L")
     end
     if search_file then
       table.insert(find_command, "-name")
       table.insert(find_command, "*" .. search_file .. "*")
     end
     if search_dirs then
-      table.remove(find_command, 2)
+      table.remove(find_command, 5)
       for _, v in pairs(search_dirs) do
-        table.insert(find_command, 2, v)
+        table.insert(find_command, 5, v)
       end
     end
     -- TODO: Add error logging here
