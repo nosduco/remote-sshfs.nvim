@@ -3,7 +3,7 @@
 🚧 **(ALPHA/UNSTABLE) This plugin is currently being developed and may
 break or change frequently!** 🚧
 
-Explore, edit, and develop on a remote machine via SSHFS with Neovim. Loosely based on the VSCode extension [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh).
+Explore, edit, and develop on a remote machine via SSHFS with Neovim. Loosely based on the VSCode extension [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh). (Note: this plugin does not install packages on the remote server, instead it conducts finds, greps, etc over SSH and accesses files via SSHFS)
 
 ![Demo](https://github.com/nosduco/remote-sshfs.nvim/blob/main/demo.gif)
 
@@ -25,9 +25,11 @@ latest neovim nightly commit is required for `remote-sshfs.nvim` to work because
 
 ##### Neovim plugins
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
 
 ##### System dependencies
 - [sshfs](https://github.com/libfuse/sshfs)
+- [ssh](https://www.openssh.com/)
 
 ### Installation
 
@@ -94,8 +96,12 @@ With this plugin you can:
 - Connect and mount a remote host via SSHFS using the `:RemoteSSHFSConnect` command. This command will trigger a picker to appear where you can select hosts that have been parsed from your SSH config files. Upon selecting a host, remote-sshfs will mount the host (by default at `~/.sshfs/<hostname>`) and change the current working directory to that folder. Additionally, by default, once vim closes the mount will be automatically unmounted and cleaned.
 - Disconnect from a remote host that you're current connected to using the `:RemoteSSHFSDisconnect` command
 - Select a SSH config to edit via a picker by using the `:RemoteSSHFSEdit` command
+- Utilize Telescope Find Files functionality completely remote via SSH by using the `:RemoteSSHFindFiles` command (<strong>Note: the remote server must have either [ripgrep](https://github.com/BurntSushi/ripgrep), [fd/fdfind](https://github.com/sharkdp/fd), or the where command</strong>)
+- Utilize Telescope Live Grep functionality completely remote via SSH by using the `:RemoteSSHLiveGrep` command (<strong>Note: the remote server must have [ripgrep](https://github.com/BurntSushi/ripgrep) installed</strong>)
 
 <strong>Note:</strong> Currently only parsing hosts is supported, the ability to pass a host via the above commands will eventually be added
+
+To learn more about SSH configs and how to write/style one you can read more [here](https://linuxize.com/post/using-the-ssh-config-file/)
 
 For conveninece, it is recommended to setup keymappings for these commands.
 
@@ -105,6 +111,24 @@ local api = require('remote-sshfs.api')
 vim.keymap.set('n', '<leader>rc', api.connect, {})
 vim.keymap.set('n', '<leader>rd', api.disconnect, {})
 vim.keymap.set('n', '<leader>re', api.edit, {})
+
+-- (optional) Override telescope find_files and live_grep to make dynamic based on if connected to host
+local builtin = require("telescope.builtin")
+local connections = require("remote-sshfs.connections")
+vim.keymap.set("n", "<leader>ff", function()
+	if connections.is_connected then
+		api.find_files()
+	else
+		builtin.find_files()
+	end
+end, {})
+vim.keymap.set("n", "<leader>fg", function()
+	if connections.is_connected then
+		api.live_grep()
+	else
+		builtin.live_grep()
+	end
+end, {})
 ```
 
 ## Customization
@@ -135,7 +159,6 @@ require('remote-sshfs').setup{
   handlers = {
     on_connect = {
       change_dir = true, -- when connected change vim working directory to mount point
-      find_files = false, -- when connected, run telescope find files
     },
     on_disconnect = {
       clean_mount_folders = false, -- remove mount point folder on disconnect/unmount
@@ -171,6 +194,10 @@ Here's a list of the available commands:
 `:RemoteSSHFSDisconnect`: Use this command to disconnect from a connected host
 
 `:RemoteSSHFSEdit`: Use this command to open the ssh config picker to open and edit ssh configs
+
+`:RemoteSSHFSFindFiles`: Use this command to initiate a telescope find files window which operates completely remotely via SSH and will open buffers referencing to your local mount
+
+`:RemoteSSHFSLiveGrep`: Use this command to initiate a telescope live grep window which operates completely remotely via SSH and will open buffers referencing to your local mount
 
 ## Integrations
 

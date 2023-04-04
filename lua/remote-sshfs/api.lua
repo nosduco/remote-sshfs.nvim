@@ -22,4 +22,14 @@ M.reload = function()
   connections.reload()
 end
 
+-- Trigger remote find_files
+M.find_files = function()
+  require("telescope").extensions["remote-sshfs"].find_files()
+end
+
+-- Trigger remote live_grep
+M.live_grep = function()
+  require("telescope").extensions["remote-sshfs"].live_grep()
+end
+
 return M

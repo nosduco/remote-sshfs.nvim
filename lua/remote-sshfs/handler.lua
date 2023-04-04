@@ -49,17 +49,12 @@ M.authenticated_handler = function(mount_dir)
       utils.change_directory(mount_dir)
     end
   end
-
-  if M.find_files then
-    utils.find_files()
-  end
 end
 
 M.setup = function(opts)
   M.clean_mount_folders = opts.handlers.on_disconnect.clean_mount_folders
   M.change_dir = opts.handlers.on_connect.change_dir
   M.confirm_change_dir = opts.ui.confirm.change_dir
-  M.find_files = opts.handlers.on_connect.find_files
 end
 
 return M

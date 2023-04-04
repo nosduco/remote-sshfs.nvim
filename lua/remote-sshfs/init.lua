@@ -19,7 +19,6 @@ local default_opts = {
   handlers = {
     on_connect = {
       change_dir = true,
-      find_files = false,
     },
     on_disconnect = {
       clean_mount_folders = false,
@@ -47,7 +46,7 @@ local default_opts = {
 }
 
 M.setup_commands = function()
-  -- Create commands to connect/edit/reload/disconnect
+  -- Create commands to connect/edit/reload/disconnect/find_files/live_grep
   vim.api.nvim_create_user_command("RemoteSSHFSConnect", function()
     require("telescope").extensions["remote-sshfs"].connect()
   end, {})
@@ -57,9 +56,15 @@ M.setup_commands = function()
   vim.api.nvim_create_user_command("RemoteSSHFSReload", function()
     require("remote-sshfs.connections").reload()
   end, {})
-  vim.api.nvim_create_user_command("RemoteSSHFSDisconnect", function() end, {
-    require("remote-sshfs.connections").unmount_host(),
-  })
+  vim.api.nvim_create_user_command("RemoteSSHFSDisconnect", function()
+    require("remote-sshfs.connections").unmount_host()
+  end, {})
+  vim.api.nvim_create_user_command("RemoteSSHFSFindFiles", function()
+    require("telescope").extensions["remote-sshfs"].find_files {}
+  end, {})
+  vim.api.nvim_create_user_command("RemoteSSHFSLiveGrep", function()
+    require("telescope").extensions["remote-sshfs"].live_grep {}
+  end, {})
 end
 
 M.setup = function(config)
