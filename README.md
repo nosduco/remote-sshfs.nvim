@@ -1,5 +1,7 @@
 # remote-sshfs.nvim
 
+[![Actions status](https://github.com/nosduco/remote-sshfs.nvim/workflows/CI/badge.svg)](https://github.com/nosduco/remote-sshfs.nvim/actions)
+
 🚧 **(ALPHA/UNSTABLE) This plugin is currently being developed and may
 break or change frequently!** 🚧
 
