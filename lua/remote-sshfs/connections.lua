@@ -134,7 +134,6 @@ M.mount_host = function(host, mount_dir, ask_pass)
     mount_point = mount_dir .. "/"
     current_host = host
     sshfs_job_id = vim.fn.jobstart(sshfs_cmd_local, {
-      cwd = mount_dir,
       on_stdout = function(_, data)
         handler.sshfs_wrapper(data, mount_dir, function(event)
           if event == "ask_pass" then
