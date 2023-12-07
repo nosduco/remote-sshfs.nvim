@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: Release
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.prepare.outputs.release_created }}
+      version: ${{ steps.prepare.outputs.tag_name }}
+    steps:
+      - name: Prepare release
+        id: prepare
+        uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: simple
+          package-name: remote-sshfs.nvim
+          pull-request-header: Prepared Release
+          changelog-types: '[{"type":"feat","section":"Features"},{"type":"fix","section":"Bug Fixes"},{"type":"doc","section":"Documentation"},{"type":"perf","section":"Performance"},{"type":"refactor","section":"Refactor"},{"type":"test","section":"Testing"},{"type":"chore","section":"Miscellaneous Tasks"},{"type":"ci","section":"CI/CD"}]'
