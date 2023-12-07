@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.2.2...v0.2.3) (2023-12-07)
+
+
+### Bug Fixes
+
+* pass opts through api layer to telescope extension. [#6](https://github.com/nosduco/remote-sshfs.nvim/issues/6) ([6104abf](https://github.com/nosduco/remote-sshfs.nvim/commit/6104abf11fc891d89ac62f1a972d04d3641b9f96))
+
 ## [0.2.2](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.2.1...v0.2.2) (2023-12-07)
 
 
