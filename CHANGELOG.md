@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.2.3...v0.3.0) (2023-12-09)
+
+
+### Features
+
+* add argument to RemoteSSHFSConnect command to directly connect on user, host, path, and port ([#14](https://github.com/nosduco/remote-sshfs.nvim/issues/14)) ([3cebc71](https://github.com/nosduco/remote-sshfs.nvim/commit/3cebc7140ecb56aa613e66e8404a30d31f618b2e))
+
 ## [0.2.3](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.2.2...v0.2.3) (2023-12-07)
 
 
