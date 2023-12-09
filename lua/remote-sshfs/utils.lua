@@ -84,6 +84,26 @@ M.parse_hosts_from_configs = function(ssh_configs)
   return hosts
 end
 
+M.parse_host_from_command = function(command)
+  local host = {}
+
+  local port = command:match "%-p (%d+)"
+  host["Port"] = port
+
+  command = command:gsub("%s*%-p %d+%s*", "")
+
+  local user, hostname, path = command:match "^([^@]+)@([^:]+):?(.*)$"
+  if not user then
+    hostname, path = command:match "^([^:]+):?(.*)$"
+  end
+
+  host["Name"] = hostname
+  host["User"] = user
+  host["Path"] = path
+
+  return host
+end
+
 M.change_directory = function(path)
   -- Change the working directory of the Vim instance
   vim.fn.execute("cd " .. path)

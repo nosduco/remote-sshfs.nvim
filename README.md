@@ -10,6 +10,7 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. Loosely ba
 ![Demo](https://github.com/nosduco/remote-sshfs.nvim/blob/main/demo.gif)
 
 ## Table of Contents
+
 - [Getting Started](#getting-started)
 - [Usage](#usage)
 - [Customization](#customization)
@@ -26,16 +27,18 @@ latest neovim nightly commit is required for `remote-sshfs.nvim` to work because
 ### Required dependencies
 
 ##### Neovim plugins
+
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
 
 ##### System dependencies
+
 - [sshfs](https://github.com/libfuse/sshfs)
 - [ssh](https://www.openssh.com/)
 
 ### Installation
 
-##### Install using your favorite package manager:
+##### Install using your favorite package manager
 
 Using [vim-plug](https://github.com/junegunn/vim-plug)
 
@@ -48,6 +51,7 @@ Using [dein](https://github.com/Shougo/dein.vim)
 ```viml
 call dein#add('nosduco/remote-sshfs.nvim')
 ```
+
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
@@ -74,13 +78,13 @@ return {
 
 ### Setup (<strong>Important!</strong>)
 
-##### Setup the plugin (override config if necessary, default is below):
+##### Setup the plugin (override config if necessary, default is below)
 
 ```lua
 require('remote-sshfs').setup({})
 ```
 
-##### Load the extension with telescope:
+##### Load the extension with telescope
 
 ```lua
 require('telescope').load_extension 'remote-sshfs'
@@ -91,7 +95,7 @@ Try the command `:RemoteSSHFSConnect`
 
 ## Usage
 
-This plugin allows you to edit files on remote hosts via SSHFS as if they were local. 
+This plugin allows you to edit files on remote hosts via SSHFS as if they were local.
 
 With this plugin you can:
 
@@ -108,6 +112,7 @@ To learn more about SSH configs and how to write/style one you can read more [he
 For conveninece, it is recommended to setup keymappings for these commands.
 
 Setup keymappings using Lua:
+
 ```lua
 local api = require('remote-sshfs.api')
 vim.keymap.set('n', '<leader>rc', api.connect, {})
@@ -118,18 +123,18 @@ vim.keymap.set('n', '<leader>re', api.edit, {})
 local builtin = require("telescope.builtin")
 local connections = require("remote-sshfs.connections")
 vim.keymap.set("n", "<leader>ff", function()
-	if connections.is_connected then
-		api.find_files()
-	else
-		builtin.find_files()
-	end
+ if connections.is_connected then
+  api.find_files()
+ else
+  builtin.find_files()
+ end
 end, {})
 vim.keymap.set("n", "<leader>fg", function()
-	if connections.is_connected then
-		api.live_grep()
-	else
-		builtin.live_grep()
-	end
+ if connections.is_connected then
+  api.live_grep()
+ else
+  builtin.live_grep()
+ end
 end, {})
 ```
 
@@ -189,9 +194,13 @@ require('remote-sshfs').setup{
 
 ## Commands
 
-Here's a list of the available commands:
+Here's a list of the available commands and variations:
 
 `:RemoteSSHFSConnect`: Use this command to open the host picker and connect to a remote host (parsed from ssh configs)
+
+`:RemoteSSHFSConnect <[user@]host>:/path -p <port>`: Use this command to directly connect to a host with optional user, path, and port variables like you would with `scp` or `sshfs`.
+
+- Examples: `:RemoteSSHFSConnect tony@server:/srv -p 1234`, `:RemoteSSHFSConnect server`, `:RemoteSSHFSConnect tony@server`
 
 `:RemoteSSHFSDisconnect`: Use this command to disconnect from a connected host
 
