@@ -110,7 +110,8 @@ M.mount_host = function(host, mount_dir, ask_pass)
   if host["User"] then
     user = host["User"]
   end
-  sshfs_cmd = sshfs_cmd .. user .. "@" .. remote_host
+  sshfs_cmd = sshfs_cmd .. user .. "@"
+  sshfs_cmd = sshfs_cmd .. remote_host
 
   if host["Path"] then
     sshfs_cmd = sshfs_cmd .. ":" .. host["Path"] .. " "
