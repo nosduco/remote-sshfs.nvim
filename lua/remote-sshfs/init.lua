@@ -48,7 +48,7 @@ local default_opts = {
 M.setup_commands = function()
   -- Create commands to connect/edit/reload/disconnect/find_files/live_grep
   vim.api.nvim_create_user_command("RemoteSSHFSConnect", function(opts)
-    if opts.args then
+    if opts.args and opts.args ~= "" then
       local host = require("remote-sshfs.utils").parse_host_from_command(opts.args)
       require("remote-sshfs.connections").connect(host)
     else
