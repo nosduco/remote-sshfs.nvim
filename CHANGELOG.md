@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.0...v0.3.1) (2024-01-08)
+
+
+### Bug Fixes
+
+* empty argument processing for :RemoveSSHFSConnect command. fixes [#16](https://github.com/nosduco/remote-sshfs.nvim/issues/16) ([e11dd19](https://github.com/nosduco/remote-sshfs.nvim/commit/e11dd19c2ecf9881022429d1bca08d9bfd95c6c6))
+
 ## [0.3.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.2.3...v0.3.0) (2023-12-09)
 
 
