@@ -51,7 +51,7 @@ end
 
 M.parse_hosts_from_configs = function(ssh_configs)
   local hosts = {}
-  local current_host = nil
+  local current_hosts = {}
 
   -- Iterate through all ssh config files in config
   for _, path in ipairs(ssh_configs) do
@@ -62,18 +62,21 @@ M.parse_hosts_from_configs = function(ssh_configs)
         -- Ignore comments and empty lines
         if line:sub(1, 1) ~= "#" and line:match "%S" then
           -- Check if the line is a Host entry
-          local host_name = line:match "^%s*Host%s+(.+)$"
-          if host_name then
-            current_host = host_name
-            hosts[current_host] = {}
-            hosts[current_host]["Config"] = path
-            hosts[current_host]["Name"] = current_host
+          local host_names = line:match "^%s*Host%s+(.+)$"
+          if host_names then
+            current_hosts = {}
+            for host_name in host_names:gmatch "%S+" do
+              table.insert(current_hosts, host_name)
+              hosts[host_name] = { ["Config"] = path, ["Name"] = host_name }
+            end
           else
-            -- If the line is not a Host entry, but there is a current host, add the line to its attributes
-            if current_host then
+            -- If the line is not a Host entry, but there are current hosts, add the line to their attributes
+            if #current_hosts > 0 then
               local key, value = line:match "^%s*(%S+)%s+(.+)$"
               if key and value then
-                hosts[current_host][key] = value
+                for _, host in ipairs(current_hosts) do
+                  hosts[host][key] = value
+                end
               end
             end
           end
