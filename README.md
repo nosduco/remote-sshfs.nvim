@@ -29,6 +29,12 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-ss
 - [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
 - [ssh](https://en.wikipedia.org/wiki/Secure_Shell): for secure shell connections to remote hosts
 
+### Remote Machine
+
+- [ssh](https://en.wikipedia.org/wiki/Secure_Shell): for secure shell connections to remote hosts
+- (recommended) [ripgrep](https://github.com/BurntSushi/ripgrep), [fd/fdfind](https://github.com/sharkdp/fd), or `where` command: for remote find files functionality
+- (recommended) [ripgrep](https://github.com/BurntSushi/ripgrep): for remote live grep functionality
+
 ## 📦 Installation
 
 Install using your favorite package manager
@@ -118,9 +124,9 @@ require('remote-sshfs').setup{
 
 **`:RemoteSSHFSEdit`**: Use this command to open the ssh config picker to open and edit ssh configs
 
-**`:RemoteSSHFSFindFiles`**: Use this command to initiate a telescope find files window which operates completely remotely via SSH and will open buffers referencing to your local mount. Reference use cases below for remote system requirements.
+**`:RemoteSSHFSFindFiles`**: Use this command to initiate a telescope find files window which operates completely remotely via SSH and will open buffers referencing to your local mount.
 
-**`:RemoteSSHFSLiveGrep`**: Use this command to initiate a telescope live grep window which operates completely remotely via SSH and will open buffers referencing to your local mount. Reference use cases below for remote system requirements.
+**`:RemoteSSHFSLiveGrep`**: Use this command to initiate a telescope live grep window which operates completely remotely via SSH and will open buffers referencing to your local mount.
 
 ### Keybinds
 
