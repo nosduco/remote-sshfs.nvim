@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.1...v0.3.2) (2024-05-25)
+
+
+### Bug Fixes
+
+* ssh config hosts with multiple hostnames [#11](https://github.com/nosduco/remote-sshfs.nvim/issues/11) ([f1c0af4](https://github.com/nosduco/remote-sshfs.nvim/commit/f1c0af44362ebf475ee01a13377a42b17b348df7))
+
 ## [0.3.1](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.0...v0.3.1) (2024-01-08)
 
 
