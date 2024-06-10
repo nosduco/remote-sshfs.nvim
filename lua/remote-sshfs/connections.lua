@@ -106,11 +106,14 @@ M.mount_host = function(host, mount_dir, ask_pass)
     sshfs_cmd = sshfs_cmd .. "-p " .. host["Port"] .. " "
   end
 
-  local user = vim.fn.expand "$USERNAME"
+  local user = nil
   if host["User"] then
     user = host["User"]
   end
-  sshfs_cmd = sshfs_cmd .. user .. "@"
+
+  if user then
+    sshfs_cmd = sshfs_cmd .. user .. "@"
+  end
   sshfs_cmd = sshfs_cmd .. remote_host
 
   if host["Path"] then
