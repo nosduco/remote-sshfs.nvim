@@ -21,7 +21,11 @@ M.prompt = function(prompt_input, prompt_select, items_short, items_long, callba
 end
 
 M.prompt_yes_no = function(prompt_input, callback)
-  return M.prompt(prompt_input .. " y/n: ", prompt_input, { "y", "n" }, { "Yes", "No" }, callback)
+  local result = M.prompt(prompt_input .. " y/n: ", prompt_input, { "y", "n" }, { "Yes", "No" }, callback)
+  vim.schedule(function()
+    vim.cmd "startinsert"
+  end)
+  return result
 end
 
 M.clear_prompt = function()
