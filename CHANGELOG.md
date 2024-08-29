@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.3...v0.3.4) (2024-08-29)
+
+
+### Bug Fixes
+
+* ensure insert mode on confirm inputs [#28](https://github.com/nosduco/remote-sshfs.nvim/issues/28) ([c66f203](https://github.com/nosduco/remote-sshfs.nvim/commit/c66f2032bacf9c3cc5365d4e157a68876dbbb9ab))
+
 ## [0.3.3](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.2...v0.3.3) (2024-06-11)
 
 
