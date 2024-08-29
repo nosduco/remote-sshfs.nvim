@@ -72,6 +72,8 @@ require('remote-sshfs').setup{
       "/etc/ssh/ssh_config",
       -- "/path/to/custom/ssh_config"
     },
+    -- NOTE: Can define ssh_configs similarly to include all configs in a folder
+    -- ssh_configs = vim.split(vim.fn.globpath(vim.fn.expand "$HOME" .. "/.ssh/configs", "*"), "\n")
     sshfs_args = { -- arguments to pass to the sshfs command
       "-o reconnect",
       "-o ConnectTimeout=5",
