@@ -147,20 +147,22 @@ local function find_files(opts)
     end
   end
 
-  -- Create FZF options
-  local fzf_opts = {
+  -- Build fzf options string
+  local opts = '--prompt="Remote Find Files> "'
+    .. ' --preview="cat ' .. mount_point .. '/{}"'
+    .. ' --preview-window="right:50%"'
+
+  -- Create spec table for fzf
+  local spec = {
     source = table.concat(find_command, " "),
     sink = function(selected)
       vim.cmd('edit ' .. mount_point .. '/' .. selected)
     end,
-    options = {
-      ['--prompt'] = 'Remote Find Files> ',
-      ['--preview'] = string.format('cat %s/{}', mount_point),
-      ['--preview-window'] = 'right:50%',
-    }
+    options = opts
   }
 
-  vim.fn['fzf#run'](vim.fn['fzf#wrap'](fzf_opts))
+  -- Run fzf with proper wrapping
+  vim.fn['fzf#run'](vim.fn['fzf#wrap']('remote-find', spec, 0))
 end
 
 -- Remote live_grep implementation
@@ -203,8 +205,15 @@ local function live_grep(opts)
     end
   end
 
-  -- Create FZF options
-  local fzf_opts = {
+  -- Build fzf options string
+  local opts = '--prompt="Remote Live Grep> "'
+    .. ' --preview="bat --style=numbers --color=always ' .. mount_point .. '/$(echo {} | cut -d: -f1)"'
+    .. ' --preview-window="right:50%"'
+    .. ' --delimiter=":"'
+    .. ' --nth="4.."'
+
+  -- Create spec table for fzf
+  local spec = {
     source = table.concat(rg_command, " "),
     sink = function(selected)
       -- Parse the selection (format: file:line:col:text)
@@ -217,16 +226,11 @@ local function live_grep(opts)
       vim.cmd('edit ' .. mount_point .. '/' .. file)
       vim.api.nvim_win_set_cursor(0, {line, col - 1})
     end,
-    options = {
-      ['--prompt'] = 'Remote Live Grep> ',
-      ['--preview'] = string.format('bat --style=numbers --color=always %s/$(echo {} | cut -d: -f1)', mount_point),
-      ['--preview-window'] = 'right:50%',
-      ['--delimiter'] = ':',
-      ['--nth'] = '4..',
-    }
+    options = opts
   }
 
-  vim.fn['fzf#run'](vim.fn['fzf#wrap'](fzf_opts))
+  -- Run fzf with proper wrapping
+  vim.fn['fzf#run'](vim.fn['fzf#wrap']('remote-grep', spec, 0))
 end
 
 -- Initialize plugin
