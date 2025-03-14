@@ -24,37 +24,35 @@ end
 
 -- FZF action to select a host to connect to
 local function connect(_)
-  local connections = require("remote-sshfs.connections")
+  local connections = require "remote-sshfs.connections"
   local hosts = connections.list_hosts()
-  
+
   -- Create a temporary file to store host previews
   local preview_file = vim.fn.tempname()
   local preview_data = {}
-  
+
   -- Prepare preview data for each host
   local source = {}
   for hostname, _ in pairs(hosts) do
     table.insert(source, hostname)
     preview_data[hostname] = build_host_preview(hosts, hostname)
   end
-  
+
   -- Write preview data to temp file
   local lines = {}
   for hostname, preview in pairs(preview_data) do
     table.insert(lines, hostname .. "\n" .. preview .. "\n---")
   end
   vim.fn.writefile(lines, preview_file)
-  
+
   -- Create preview command that reads from the temp file
-  local preview_cmd = string.format(
-    'awk -v RS="---" "/^%s\\n/{print}" %s | tail -n +2',
-    '{}',
-    preview_file
-  )
-  
+  local preview_cmd = string.format('awk -v RS="---" "/^%s\\n/{print}" %s | tail -n +2', "{}", preview_file)
+
   -- Build fzf options string
   local opts = '--prompt="Connect to remote host> "'
-    .. ' --preview="' .. preview_cmd .. '"'
+    .. ' --preview="'
+    .. preview_cmd
+    .. '"'
     .. ' --preview-window="right:50%"'
 
   -- Create spec table for fzf
@@ -66,29 +64,29 @@ local function connect(_)
       -- Clean up temp file
       vim.fn.delete(preview_file)
     end,
-    options = opts
+    options = opts,
   }
 
   -- Run fzf with proper wrapping
-  vim.fn['fzf#run'](vim.fn['fzf#wrap']('remote-sshfs', spec, 0))
+  vim.fn["fzf#run"](vim.fn["fzf#wrap"]("remote-sshfs", spec, 0))
 end
 
 -- FZF action to select ssh config file to edit
 local function edit_config(_)
-  local connections = require("remote-sshfs.connections")
+  local connections = require "remote-sshfs.connections"
   local ssh_configs = connections.list_ssh_configs()
 
-  vim.fn['fzf#run'](vim.fn['fzf#wrap']({
+  vim.fn["fzf#run"](vim.fn["fzf#wrap"] {
     source = ssh_configs,
     sink = function(selected)
-      vim.cmd('edit ' .. selected)
+      vim.cmd("edit " .. selected)
     end,
     options = {
-      ['--prompt'] = 'Choose SSH config file to edit> ',
-      ['--preview'] = 'cat {}',
-      ['--preview-window'] = 'right:50%',
-    }
-  }))
+      ["--prompt"] = "Choose SSH config file to edit> ",
+      ["--preview"] = "cat {}",
+      ["--preview-window"] = "right:50%",
+    },
+  })
 end
 
 local function command_exists_on_remote(command, server)
@@ -100,10 +98,10 @@ end
 -- Remote find_files implementation
 local function find_files(opts)
   opts = opts or {}
-  local connections = require("remote-sshfs.connections")
+  local connections = require "remote-sshfs.connections"
 
   if not connections.is_connected() then
-    vim.notify("You are not currently connected to a remote host.")
+    vim.notify "You are not currently connected to a remote host."
     return
   end
 
@@ -129,7 +127,7 @@ local function find_files(opts)
   end)()
 
   if not find_command then
-    vim.notify("Remote host does not support any available find commands (rg, fd, fdfind, where).")
+    vim.notify "Remote host does not support any available find commands (rg, fd, fdfind, where)."
     return
   end
 
@@ -149,29 +147,31 @@ local function find_files(opts)
 
   -- Build fzf options string
   local opts = '--prompt="Remote Find Files> "'
-    .. ' --preview="cat ' .. mount_point .. '/{}"'
+    .. ' --preview="cat '
+    .. mount_point
+    .. '/{}"'
     .. ' --preview-window="right:50%"'
 
   -- Create spec table for fzf
   local spec = {
     source = table.concat(find_command, " "),
     sink = function(selected)
-      vim.cmd('edit ' .. mount_point .. '/' .. selected)
+      vim.cmd("edit " .. mount_point .. "/" .. selected)
     end,
-    options = opts
+    options = opts,
   }
 
   -- Run fzf with proper wrapping
-  vim.fn['fzf#run'](vim.fn['fzf#wrap']('remote-find', spec, 0))
+  vim.fn["fzf#run"](vim.fn["fzf#wrap"]("remote-find", spec, 0))
 end
 
 -- Remote live_grep implementation
 local function live_grep(opts)
   opts = opts or {}
-  local connections = require("remote-sshfs.connections")
+  local connections = require "remote-sshfs.connections"
 
   if not connections.is_connected() then
-    vim.notify("You are not currently connected to a remote host.")
+    vim.notify "You are not currently connected to a remote host."
     return
   end
 
@@ -207,7 +207,9 @@ local function live_grep(opts)
 
   -- Build fzf options string
   local opts = '--prompt="Remote Live Grep> "'
-    .. ' --preview="bat --style=numbers --color=always ' .. mount_point .. '/$(echo {} | cut -d: -f1)"'
+    .. ' --preview="bat --style=numbers --color=always '
+    .. mount_point
+    .. '/$(echo {} | cut -d: -f1)"'
     .. ' --preview-window="right:50%"'
     .. ' --delimiter=":"'
     .. ' --nth="4.."'
@@ -221,34 +223,34 @@ local function live_grep(opts)
       local file = parts[1]
       local line = tonumber(parts[2])
       local col = tonumber(parts[3])
-      
+
       -- Open the file at the specific location
-      vim.cmd('edit ' .. mount_point .. '/' .. file)
-      vim.api.nvim_win_set_cursor(0, {line, col - 1})
+      vim.cmd("edit " .. mount_point .. "/" .. file)
+      vim.api.nvim_win_set_cursor(0, { line, col - 1 })
     end,
-    options = opts
+    options = opts,
   }
 
   -- Run fzf with proper wrapping
-  vim.fn['fzf#run'](vim.fn['fzf#wrap']('remote-grep', spec, 0))
+  vim.fn["fzf#run"](vim.fn["fzf#wrap"]("remote-grep", spec, 0))
 end
 
 -- Initialize plugin
 local function setup()
   -- Create user commands
-  vim.api.nvim_create_user_command('RemoteConnect', function(opts)
+  vim.api.nvim_create_user_command("RemoteConnect", function(opts)
     connect(opts)
   end, {})
 
-  vim.api.nvim_create_user_command('RemoteEdit', function(opts)
+  vim.api.nvim_create_user_command("RemoteEdit", function(opts)
     edit_config(opts)
   end, {})
 
-  vim.api.nvim_create_user_command('RemoteFiles', function(opts)
+  vim.api.nvim_create_user_command("RemoteFiles", function(opts)
     find_files(opts)
   end, {})
 
-  vim.api.nvim_create_user_command('RemoteGrep', function(opts)
+  vim.api.nvim_create_user_command("RemoteGrep", function(opts)
     live_grep(opts)
   end, {})
 end
