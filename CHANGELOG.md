@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.4...v0.3.5) (2025-03-28)
+
+
+### Bug Fixes
+
+* fix keybinds example in README ([#32](https://github.com/nosduco/remote-sshfs.nvim/issues/32)) ([e047b63](https://github.com/nosduco/remote-sshfs.nvim/commit/e047b6340653538efa57a8164cdcb1f729325689))
+
 ## [0.3.4](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.3...v0.3.4) (2024-08-29)
 
 
