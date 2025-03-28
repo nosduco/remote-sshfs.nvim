@@ -156,6 +156,7 @@ local function find_files(opts)
   end
 
   -- Setup
+  opts = opts or {}
   local mount_point = opts.mount_point or connections.get_current_mount_point()
   local current_host = connections.get_current_host()
 
@@ -349,6 +350,7 @@ local function live_grep(opts)
   end
 
   -- Setup
+  opts = opts or {}
   local current_host = connections.get_current_host()
   local mount_point = opts.mount_point or connections.get_current_mount_point()
   local vimgrep_arguments = {

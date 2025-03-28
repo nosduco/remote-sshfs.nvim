@@ -146,14 +146,14 @@ vim.keymap.set('n', '<leader>re', api.edit, {})
 local builtin = require("telescope.builtin")
 local connections = require("remote-sshfs.connections")
 vim.keymap.set("n", "<leader>ff", function()
- if connections.is_connected then
+ if connections.is_connected() then
   api.find_files()
  else
   builtin.find_files()
  end
 end, {})
 vim.keymap.set("n", "<leader>fg", function()
- if connections.is_connected then
+ if connections.is_connected() then
   api.live_grep()
  else
   builtin.live_grep()
