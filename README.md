@@ -82,6 +82,7 @@ require('remote-sshfs').setup{
   mounts = {
     base_dir = vim.fn.expand "$HOME" .. "/.sshfs/", -- base directory for mount points
     unmount_on_exit = true, -- run sshfs as foreground, will unmount on vim exit
+    remote_dir = "", -- remote directory to mount, by default home directory of connecting user
   },
   handlers = {
     on_connect = {
