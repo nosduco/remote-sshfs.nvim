@@ -34,7 +34,7 @@ local default_opts = {
     },
   },
   log = {
-    enable = false,
+    enabled = false,
     truncate = false,
     types = {
       all = false,
