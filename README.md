@@ -100,7 +100,7 @@ require('remote-sshfs').setup{
     },
   },
   log = {
-    enable = false, -- enable logging
+    enabled = false, -- enable logging
     truncate = false, -- truncate logs
     types = { -- enabled log types
       all = false,
