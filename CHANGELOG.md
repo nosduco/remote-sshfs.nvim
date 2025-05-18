@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.5...v0.3.6) (2025-05-18)
+
+
+### Bug Fixes
+
+* rename enable to enabled to fix mismatched config option for logging ([#36](https://github.com/nosduco/remote-sshfs.nvim/issues/36)) ([a1bea01](https://github.com/nosduco/remote-sshfs.nvim/commit/a1bea018c1b43ca8cc8a6e9adc4128e07610fd34))
+
 ## [0.3.5](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.4...v0.3.5) (2025-03-28)
 
 
