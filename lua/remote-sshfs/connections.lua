@@ -93,7 +93,8 @@ M.mount_host = function(host, mount_dir, ask_pass)
     return
   end
   -- Setup new connection
-  local remote_host = host["Name"]
+  -- Determine actual remote hostname (honoring HostName overrides)
+  local target_host = host["HostName"] or host["Name"]
 
   -- Build SSHFS command as argument list to avoid shell quoting issues
   local cmd = { "sshfs" }
@@ -121,7 +122,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
     table.insert(cmd, "password_stdin")
   end
   -- Build remote spec: [user@]host[:path]
-  local spec = remote_host
+  local spec = target_host
   if host["User"] then
     spec = host["User"] .. "@" .. spec
   end
@@ -131,7 +132,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
   table.insert(cmd, mount_dir)
 
   local function start_job()
-    vim.notify("Connecting to host (" .. remote_host .. ")...")
+    vim.notify("Connecting to host (" .. (host["Name"] or target_host) .. ")...")
     local skip_clean = false
     local spec_mount_point = mount_dir .. "/"
     local spec_host = host
