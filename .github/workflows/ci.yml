@@ -37,8 +37,9 @@ jobs:
       - name: Run unit tests
         run: |
           nvim --headless \
-            -u NONE \
-            -c 'set rtp+=.' \
-            -c 'set rtp+=~/.local/share/nvim/site/pack/packer/start/plenary.nvim' \
-            -c 'lua require("plenary.test_harness").test_directory("tests", { minimal_init = true })' \
-            -c 'qa'
+                -u NONE \
+                -i NONE \
+                -c 'set rtp+=.' \
+                -c 'packadd plenary.nvim' \
+                -c 'PlenaryBustedDirectory tests' \
+                -c 'qa!'
