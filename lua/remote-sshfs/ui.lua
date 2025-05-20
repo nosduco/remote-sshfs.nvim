@@ -29,13 +29,15 @@ M.prompt_yes_no = function(prompt_input, callback)
 end
 
 M.clear_prompt = function()
+  -- Safely cancel any pending command-line input
   if vim.opt.cmdheight._value ~= 0 then
-    vim.cmd "normal! :"
+    local esc = vim.api.nvim_replace_termcodes("<C-c>", true, false, true)
+    vim.api.nvim_feedkeys(esc, "n", false)
   end
 end
 
 M.setup = function(opts)
-  M.select_prompts = opts.select_prompts
+  M.select_prompts = opts.ui and opts.ui.select_prompts or false
 end
 
 return M

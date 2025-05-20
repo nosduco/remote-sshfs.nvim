@@ -54,7 +54,13 @@ M.setup_commands = function()
     else
       require("telescope").extensions["remote-sshfs"].connect()
     end
-  end, { nargs = "?", desc = "Remotely connect to host via picker or command as argument." })
+  end, {
+    nargs = "?",
+    desc = "Remotely connect to host via picker or command as argument.",
+    complete = function()
+      return vim.tbl_keys(require("remote-sshfs.connections").list_hosts())
+    end,
+  })
   vim.api.nvim_create_user_command("RemoteSSHFSEdit", function()
     require("telescope").extensions["remote-sshfs"].edit()
   end, {})
