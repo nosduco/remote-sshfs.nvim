@@ -26,7 +26,8 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-ss
 
 ### Local Machine
 
-- [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
+ - [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
+ - Check health: run `:checkhealth remote-sshfs` in Neovim to verify that `sshfs` and unmount tools are installed
 - [ssh](https://en.wikipedia.org/wiki/Secure_Shell): for secure shell connections to remote hosts
 
 ### Remote Machine
