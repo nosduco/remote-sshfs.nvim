@@ -87,57 +87,56 @@ M.init_host = function(host, ask_pass)
 end
 
 M.mount_host = function(host, mount_dir, ask_pass)
+  -- Ensure sshfs is available
+  if vim.fn.executable "sshfs" == 0 then
+    vim.api.nvim_err_writeln "[remote-sshfs] 'sshfs' not found. Please install sshfs to use remote-sshfs."
+    return
+  end
   -- Setup new connection
   local remote_host = host["Name"]
 
-  -- Construct the SSHFS command
-  local sshfs_cmd = "sshfs -o LOGLEVEL=VERBOSE "
-
-  -- Add custom SSHFS args from config
+  -- Build SSHFS command as argument list to avoid shell quoting issues
+  local cmd = { "sshfs" }
+  -- Verbose logging
+  table.insert(cmd, "-o")
+  table.insert(cmd, "LOGLEVEL=VERBOSE")
+  -- Custom SSHFS args
   for _, value in ipairs(sshfs_args) do
-    sshfs_cmd = sshfs_cmd .. value .. " "
+    for _, part in ipairs(vim.split(value, "%s+")) do
+      table.insert(cmd, part)
+    end
   end
-
+  -- Run in foreground to allow graceful unmount if configured
   if config.mounts.unmount_on_exit then
-    sshfs_cmd = sshfs_cmd .. "-f "
+    table.insert(cmd, "-f")
   end
-
+  -- Remote port
   if host["Port"] then
-    sshfs_cmd = sshfs_cmd .. "-p " .. host["Port"] .. " "
+    table.insert(cmd, "-p")
+    table.insert(cmd, host["Port"])
   end
-
-  local user = nil
+  -- Password via stdin support
+  if ask_pass then
+    table.insert(cmd, "-o")
+    table.insert(cmd, "password_stdin")
+  end
+  -- Build remote spec: [user@]host[:path]
+  local spec = remote_host
   if host["User"] then
-    user = host["User"]
+    spec = host["User"] .. "@" .. spec
   end
-
-  if user then
-    sshfs_cmd = sshfs_cmd .. user .. "@"
-  end
-  sshfs_cmd = sshfs_cmd .. remote_host
-
-  if host["Path"] then
-    sshfs_cmd = sshfs_cmd .. ":" .. host["Path"] .. " "
-  else
-    sshfs_cmd = sshfs_cmd .. ": "
-  end
-
-  sshfs_cmd = sshfs_cmd .. mount_dir
+  spec = spec .. ":" .. (host["Path"] or "")
+  table.insert(cmd, spec)
+  -- Mount point
+  table.insert(cmd, mount_dir)
 
   local function start_job()
-    local sshfs_cmd_local = sshfs_cmd
-
-    -- If password required
-    if ask_pass then
-      local password = vim.fn.inputsecret "Enter password for host: "
-      sshfs_cmd_local = "echo " .. password .. " | " .. sshfs_cmd .. " -o password_stdin"
-    end
-
     vim.notify("Connecting to host (" .. remote_host .. ")...")
     local skip_clean = false
     mount_point = mount_dir .. "/"
     current_host = host
-    sshfs_job_id = vim.fn.jobstart(sshfs_cmd_local, {
+    -- Spawn SSHFS without a shell
+    sshfs_job_id = vim.fn.jobstart(cmd, {
       on_stdout = function(_, data)
         handler.sshfs_wrapper(data, mount_dir, function(event)
           if event == "ask_pass" then
@@ -162,14 +161,32 @@ M.mount_host = function(host, mount_dir, ask_pass)
         end)
       end,
     })
+    -- If using password, send it on stdin
+    if ask_pass then
+      local password = vim.fn.inputsecret "Enter password for host: "
+      vim.fn.chansend(sshfs_job_id, password .. "\n")
+    end
   end
   start_job()
 end
 
 M.unmount_host = function()
+  -- Stop the SSHFS job if running
   if sshfs_job_id then
-    -- Kill the SSHFS process
     vim.fn.jobstop(sshfs_job_id)
+  end
+  -- Ensure the mount is unmounted on disk
+  if mount_point then
+    local target = mount_point:gsub("/$", "")
+    -- Try Linux fusermount
+    vim.fn.system { "fusermount", "-u", target }
+    if vim.v.shell_error ~= 0 then
+      -- Fallback to generic umount
+      vim.fn.system { "umount", target }
+    end
+    sshfs_job_id = nil
+    mount_point = nil
+    current_host = nil
   end
 end
 
