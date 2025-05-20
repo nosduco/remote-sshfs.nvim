@@ -28,9 +28,9 @@ jobs:
     name: Test
     runs-on: ubuntu-22.04
     steps:
-      - uses: Neovim/setup-neovim@v2
+      - uses: rhysd/action-setup-vim@v1
         with:
-          neovim-version: 'stable'
+          neovim: true
       - name: Install plenary.nvim
         run: |
           git clone https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/packer/start/plenary.nvim
