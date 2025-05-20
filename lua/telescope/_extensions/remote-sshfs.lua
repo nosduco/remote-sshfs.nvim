@@ -114,10 +114,44 @@ local function edit_config(_)
     :find()
 end
 
+local command_exists_cache = {}
+
 local function command_exists_on_remote(command, server)
+  local key = server .. ":" .. command
+  if command_exists_cache[key] ~= nil then
+    return command_exists_cache[key]
+  end
   local ssh_cmd = string.format('ssh %s "which %s"', server, command)
-  local result = vim.fn.system(ssh_cmd)
-  return result ~= ""
+  vim.fn.system(ssh_cmd)
+  local exists = (vim.v.shell_error == 0)
+  command_exists_cache[key] = exists
+  return exists
+end
+
+-- Cache per-host computed find command to avoid repeated ssh which calls
+local _find_command_cache = {}
+local function get_find_command_for_host(server)
+  if _find_command_cache[server] ~= nil then
+    return _find_command_cache[server]
+  end
+  local cmd = nil
+  if command_exists_on_remote("rg", server) then
+    cmd = { "ssh", server, "-C", "rg", "--files", "--color", "never" }
+  elseif command_exists_on_remote("fd", server) then
+    cmd = { "ssh", server, "fd", "--type", "f", "--color", "never" }
+  elseif command_exists_on_remote("fdfind", server) then
+    cmd = { "ssh", server, "fdfind", "--type", "f", "--color", "never" }
+  elseif command_exists_on_remote("where", server) then
+    cmd = { "ssh", server, "where", "/r", ".", "*" }
+  end
+  _find_command_cache[server] = cmd
+  return cmd
+end
+
+-- Clears cached remote-find commands and existence checks
+local function clear_cache()
+  command_exists_cache = {}
+  _find_command_cache = {}
 end
 
 -- Remote find_files implementation
@@ -160,22 +194,16 @@ local function find_files(opts)
   local mount_point = opts.mount_point or connections.get_current_mount_point()
   local current_host = connections.get_current_host()
 
-  local find_command = (function()
-    if opts.find_command then
-      if type(opts.find_command) == "function" then
-        return opts.find_command(opts)
-      end
-      return opts.find_command
-    elseif command_exists_on_remote("rg", current_host["Name"]) then
-      return { "ssh", current_host["Name"], "-C", "rg", "--files", "--color", "never" }
-    elseif command_exists_on_remote("fd", current_host["Name"]) then
-      return { "ssh", current_host["Name"], "fd", "--type", "f", "--color", "never" }
-    elseif command_exists_on_remote("fdfind", current_host["Name"]) then
-      return { "ssh", current_host["Name"], "fdfind", "--type", "f", "--color", "never" }
-    elseif command_exists_on_remote("where", current_host["Name"]) then
-      return { "ssh", current_host["Name"], "where", "/r", ".", "*" }
+  local find_command
+  if opts.find_command then
+    if type(opts.find_command) == "function" then
+      find_command = opts.find_command(opts)
+    else
+      find_command = opts.find_command
     end
-  end)()
+  else
+    find_command = get_find_command_for_host(current_host["Name"])
+  end
 
   if not find_command then
     vim.notify "Remote host does not support any available find commands (rg, fd, fdfind, where)."
@@ -477,11 +505,11 @@ local present, telescope = pcall(require, "telescope")
 if present then
   return telescope.register_extension {
     exports = {
-      connect = function(_)
-        connect(_)
+      connect = function(opts)
+        connect(opts)
       end,
-      edit = function(_)
-        edit_config(_)
+      edit = function(opts)
+        edit_config(opts)
       end,
       find_files = function(opts)
         find_files(opts)
@@ -489,6 +517,7 @@ if present then
       live_grep = function(opts)
         live_grep(opts)
       end,
+      clear_cache = clear_cache,
     },
   }
 else

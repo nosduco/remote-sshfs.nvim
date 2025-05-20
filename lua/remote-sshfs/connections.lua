@@ -133,10 +133,9 @@ M.mount_host = function(host, mount_dir, ask_pass)
   local function start_job()
     vim.notify("Connecting to host (" .. remote_host .. ")...")
     local skip_clean = false
-    mount_point = mount_dir .. "/"
-    current_host = host
-    -- Spawn SSHFS without a shell
-    sshfs_job_id = vim.fn.jobstart(cmd, {
+    local spec_mount_point = mount_dir .. "/"
+    local spec_host = host
+    local id = vim.fn.jobstart(cmd, {
       on_stdout = function(_, data)
         handler.sshfs_wrapper(data, mount_dir, function(event)
           if event == "ask_pass" then
@@ -153,7 +152,10 @@ M.mount_host = function(host, mount_dir, ask_pass)
           end
         end)
       end,
-      on_exit = function(_, _, data)
+      on_exit = function(jid, _, data)
+        if jid ~= sshfs_job_id then
+          return
+        end
         handler.on_exit_handler(data, mount_dir, skip_clean, function()
           sshfs_job_id = nil
           mount_point = nil
@@ -161,10 +163,16 @@ M.mount_host = function(host, mount_dir, ask_pass)
         end)
       end,
     })
-    -- If using password, send it on stdin
+    if id <= 0 then
+      vim.notify("[remote-sshfs] failed to start sshfs (code " .. tostring(id) .. ")", vim.log.levels.ERROR)
+      return
+    end
+    sshfs_job_id = id
+    mount_point = spec_mount_point
+    current_host = spec_host
     if ask_pass then
       local password = vim.fn.inputsecret "Enter password for host: "
-      vim.fn.chansend(sshfs_job_id, password .. "\n")
+      vim.fn.chansend(id, password .. "\n")
     end
   end
   start_job()
@@ -187,6 +195,8 @@ M.unmount_host = function()
     sshfs_job_id = nil
     mount_point = nil
     current_host = nil
+    -- Clear Telescope extension cache for remote-find commands
+    pcall(require, "telescope._extensions.remote-sshfs").clear_cache()
   end
 end
 
