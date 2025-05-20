@@ -127,7 +127,7 @@ local function command_exists_on_remote(command, server)
   command_exists_cache[key] = exists
   return exists
 end
-  
+
 -- Cache per-host computed find command to avoid repeated ssh which calls
 local _find_command_cache = {}
 local function get_find_command_for_host(server)
@@ -147,7 +147,7 @@ local function get_find_command_for_host(server)
   _find_command_cache[server] = cmd
   return cmd
 end
- 
+
 -- Clears cached remote-find commands and existence checks
 local function clear_cache()
   command_exists_cache = {}

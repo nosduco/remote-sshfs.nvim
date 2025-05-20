@@ -172,7 +172,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
     mount_point = spec_mount_point
     current_host = spec_host
     if ask_pass then
-      local password = vim.fn.inputsecret("Enter password for host: ")
+      local password = vim.fn.inputsecret "Enter password for host: "
       vim.fn.chansend(id, password .. "\n")
     end
   end
@@ -197,7 +197,7 @@ M.unmount_host = function()
     mount_point = nil
     current_host = nil
     -- Clear Telescope extension cache for remote-find commands
-    pcall(require, 'telescope._extensions.remote-sshfs').clear_cache()
+    pcall(require, "telescope._extensions.remote-sshfs").clear_cache()
   end
 end
 
