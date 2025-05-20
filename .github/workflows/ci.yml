@@ -1,19 +1,24 @@
-on: [push, pull_request]
-
+---
 name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   check:
     name: Check
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: lunarmodules/luacheck@v0
   fmt:
     name: Fmt
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: JohnnyMorganz/stylua-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
