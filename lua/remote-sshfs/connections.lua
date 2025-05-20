@@ -88,8 +88,8 @@ end
 
 M.mount_host = function(host, mount_dir, ask_pass)
   -- Ensure sshfs is available
-  if vim.fn.executable("sshfs") == 0 then
-    vim.api.nvim_err_writeln("[remote-sshfs] 'sshfs' not found. Please install sshfs to use remote-sshfs.")
+  if vim.fn.executable "sshfs" == 0 then
+    vim.api.nvim_err_writeln "[remote-sshfs] 'sshfs' not found. Please install sshfs to use remote-sshfs."
     return
   end
   -- Setup new connection
@@ -179,10 +179,10 @@ M.unmount_host = function()
   if mount_point then
     local target = mount_point:gsub("/$", "")
     -- Try Linux fusermount
-    vim.fn.system({"fusermount", "-u", target})
+    vim.fn.system { "fusermount", "-u", target }
     if vim.v.shell_error ~= 0 then
       -- Fallback to generic umount
-      vim.fn.system({"umount", target})
+      vim.fn.system { "umount", target }
     end
     sshfs_job_id = nil
     mount_point = nil
