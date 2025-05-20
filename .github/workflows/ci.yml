@@ -34,6 +34,11 @@ jobs:
       - name: Install plenary.nvim
         run: |
           git clone https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/packer/start/plenary.nvim
+      - name: Install Busted
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luarocks
+          luarocks install busted
       - name: Run unit tests
         run: |
           nvim --headless \
@@ -41,5 +46,5 @@ jobs:
                 -i NONE \
                 -c 'set rtp+=.' \
                 -c 'packadd plenary.nvim' \
-                -c 'PlenaryBustedDirectory tests' \
+                -c 'lua require("plenary.test_harness").test_directory("tests")' \
                 -c 'qa!'
