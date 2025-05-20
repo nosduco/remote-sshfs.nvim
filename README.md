@@ -186,7 +186,7 @@ This plugin includes:
 
 To run unit tests (pure Lua logic):
 
-  busted spec
+  busted
 
 To run integration tests headlessly from the shell:
 

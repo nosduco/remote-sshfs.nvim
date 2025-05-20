@@ -44,7 +44,7 @@ jobs:
           echo "LUA_CPATH=\"$HOME/.luarocks/lib/lua/5.1/?.so;$LUA_CPATH\"" >> $GITHUB_ENV
       - name: Run pure Lua unit tests
         run: |
-          busted spec
+          busted
       - name: Run integration tests
         run: |
           nvim --headless \
