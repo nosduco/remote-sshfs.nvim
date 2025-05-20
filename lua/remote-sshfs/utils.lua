@@ -80,6 +80,30 @@ M.parse_hosts_from_configs = function(ssh_configs)
       end
     end
   end
+  -- Resolve configured hostnames via `ssh -G`, to honor Include/Match/HostName directives
+  if vim.fn.executable "ssh" == 1 then
+    for alias, host in pairs(hosts) do
+      -- Use ssh to dump effective config for this host
+      local lines = vim.fn.systemlist { "ssh", "-G", alias }
+      if vim.v.shell_error == 0 then
+        for _, line in ipairs(lines) do
+          local key, value = line:match "^%s*(%S+)%s+(.*)$"
+          if key and value then
+            local k = key:lower()
+            if k == "hostname" then
+              host["HostName"] = value
+            elseif k == "user" then
+              host["User"] = value
+            elseif k == "port" then
+              host["Port"] = value
+            elseif k == "identityfile" then
+              host["IdentityFile"] = value
+            end
+          end
+        end
+      end
+    end
+  end
   return hosts
 end
 
