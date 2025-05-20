@@ -43,12 +43,12 @@ Install using your favorite package manager
 ```lua
 // Using lazy.nvim
 return {
- "nosduco/remote-sshfs.nvim",
- dependencies = { "nvim-telescope/telescope.nvim" },
- opts = {
-  -- Refer to the configuration section below
-  -- or leave empty for defaults
- },
+  "nosduco/remote-sshfs.nvim",
+  dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+  opts = {
+    -- Refer to the configuration section below
+    -- or leave empty for defaults
+  },
 }
 ```
 
@@ -180,12 +180,23 @@ If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or a
 
 ## 🧪 Testing
 
-This plugin includes unit tests for core utility functions. Tests use [plenary.nvim](https://github.com/nvim-lua/plenary.nvim).
+This plugin includes:
+- Pure Lua unit tests for logic functions via [Busted](https://olivinelabs.com/busted/).
+- Integration tests via [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) harness.
 
-- To run tests from within Neovim:
-    :PlenaryBustedDirectory tests
-- To run tests headlessly from the shell:
-    nvim --headless -u NONE -c 'set rtp+=.`pwd`' -c 'lua require("plenary.test_harness").test_directory("tests")' -c 'qa'
+To run unit tests (pure Lua logic):
+
+  busted spec
+
+To run integration tests headlessly from the shell:
+
+  nvim --headless \\
+    -u NONE \\
+    -i NONE \\
+    -c 'set rtp+=.' \\
+    -c 'packadd plenary.nvim' \\
+    -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \\
+    -c 'qa!'
 
 ## 🐞 Gotchas
 

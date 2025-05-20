@@ -39,14 +39,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y luarocks
           luarocks install busted --local
+          echo "$HOME/.luarocks/bin" >> $GITHUB_PATH
           echo "LUA_PATH=\"$HOME/.luarocks/share/lua/5.1/?.lua;$HOME/.luarocks/share/lua/5.1/?/init.lua;$LUA_PATH\"" >> $GITHUB_ENV
           echo "LUA_CPATH=\"$HOME/.luarocks/lib/lua/5.1/?.so;$LUA_CPATH\"" >> $GITHUB_ENV
-      - name: Run unit tests
+      - name: Run pure Lua unit tests
+        run: |
+          busted spec
+      - name: Run integration tests
         run: |
           nvim --headless \
                 -u NONE \
                 -i NONE \
                 -c 'set rtp+=.' \
                 -c 'packadd plenary.nvim' \
-                -c 'lua require("plenary.test_harness").test_directory("tests")' \
+                -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \
                 -c 'qa!'
