@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.4.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.6...v0.4.0) (2025-05-20)
+
+
+### Features
+
+* ssh config parsing via ssh -G ([#41](https://github.com/nosduco/remote-sshfs.nvim/issues/41)) ([606c4ca](https://github.com/nosduco/remote-sshfs.nvim/commit/606c4cada3908ad4b7d24e1118e787876e8d55cd))
+
+
+### Performance
+
+* various performance fixes ([#40](https://github.com/nosduco/remote-sshfs.nvim/issues/40)) ([827a8f3](https://github.com/nosduco/remote-sshfs.nvim/commit/827a8f387c2ddb17ff9031415af4f46b8cf1db46))
+
+
+### Refactor
+
+* command builder + checkhealth implementation ([#38](https://github.com/nosduco/remote-sshfs.nvim/issues/38)) ([e66bb52](https://github.com/nosduco/remote-sshfs.nvim/commit/e66bb5204b8ddc7b347f483f7da227214effc6df))
+* select input prompts, autocomplete on hosts for :RemoteSSHFSConnect ([#42](https://github.com/nosduco/remote-sshfs.nvim/issues/42)) ([334f141](https://github.com/nosduco/remote-sshfs.nvim/commit/334f1419e5c9004f4eb300c085abb58b94781ecb))
+
 ## [0.3.6](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.5...v0.3.6) (2025-05-18)
 
 
