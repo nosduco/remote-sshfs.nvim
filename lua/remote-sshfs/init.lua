@@ -47,24 +47,20 @@ local default_opts = {
 
 M.setup_commands = function()
   -- Create commands to connect/edit/reload/disconnect/find_files/live_grep
-  vim.api.nvim_create_user_command(
-    "RemoteSSHFSConnect",
-    function(opts)
-      if opts.args and opts.args ~= "" then
-        local host = require("remote-sshfs.utils").parse_host_from_command(opts.args)
-        require("remote-sshfs.connections").connect(host)
-      else
-        require("telescope").extensions["remote-sshfs"].connect()
-      end
+  vim.api.nvim_create_user_command("RemoteSSHFSConnect", function(opts)
+    if opts.args and opts.args ~= "" then
+      local host = require("remote-sshfs.utils").parse_host_from_command(opts.args)
+      require("remote-sshfs.connections").connect(host)
+    else
+      require("telescope").extensions["remote-sshfs"].connect()
+    end
+  end, {
+    nargs = "?",
+    desc = "Remotely connect to host via picker or command as argument.",
+    complete = function()
+      return vim.tbl_keys(require("remote-sshfs.connections").list_hosts())
     end,
-    {
-      nargs = "?",
-      desc = "Remotely connect to host via picker or command as argument.",
-      complete = function()
-        return vim.tbl_keys(require("remote-sshfs.connections").list_hosts())
-      end,
-    }
-  )
+  })
   vim.api.nvim_create_user_command("RemoteSSHFSEdit", function()
     require("telescope").extensions["remote-sshfs"].edit()
   end, {})

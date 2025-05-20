@@ -31,8 +31,8 @@ end
 M.clear_prompt = function()
   -- Safely cancel any pending command-line input
   if vim.opt.cmdheight._value ~= 0 then
-    local esc = vim.api.nvim_replace_termcodes('<C-c>', true, false, true)
-    vim.api.nvim_feedkeys(esc, 'n', false)
+    local esc = vim.api.nvim_replace_termcodes("<C-c>", true, false, true)
+    vim.api.nvim_feedkeys(esc, "n", false)
   end
 end
 
