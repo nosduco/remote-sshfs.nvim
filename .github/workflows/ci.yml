@@ -24,3 +24,21 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
           args: --color always --check lua/
+  test:
+    name: Test
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: Neovim/setup-neovim@v2
+        with:
+          neovim-version: 'stable'
+      - name: Install plenary.nvim
+        run: |
+          git clone https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/packer/start/plenary.nvim
+      - name: Run unit tests
+        run: |
+          nvim --headless \
+            -u NONE \
+            -c 'set rtp+=.' \
+            -c 'set rtp+=~/.local/share/nvim/site/pack/packer/start/plenary.nvim' \
+            -c 'lua require("plenary.test_harness").test_directory("tests", { minimal_init = true })' \
+            -c 'qa'

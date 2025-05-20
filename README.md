@@ -178,6 +178,21 @@ To learn more about SSH configs and how to write/style one you can read more [he
 
 If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or additional functionality, please feel free to submit an issue or a pull request. We welcome contributions from the community and are committed to making remote-sshfs.nvim as useful as possible for everyone who uses it.
 
+## 🧪 Testing
+
+This plugin includes unit tests for core utility functions. Tests use [plenary.nvim](https://github.com/nvim-lua/plenary.nvim).
+
+- To run tests from within Neovim:
+    :PlenaryBustedDirectory tests
+- To run tests headlessly from the shell:
+    nvim --headless -u NONE -c 'set rtp+=.`pwd`' -c 'lua require("plenary.test_harness").test_directory("tests")' -c 'qa'
+
+## 🐞 Gotchas
+
+- Password handling: When key-based authentication isn't used, you'll be prompted to enter a password/passphrase, which is piped to `sshfs -o password_stdin`. Ensure your SSH server allows password auth or use an SSH agent.
+- Default mount directory: By default, mounts go into `~/.sshfs/<host>/`. Override `mounts.base_dir` in your setup if you'd like a different location.
+- Key-based authentication: This plugin relies on your local SSH config and agent for auth. Make sure `ssh-agent` is running and your keys are loaded, or configure `IdentityFile` in your SSH config.
+
 ## 🌟 Credits
 
 - [folke](https://github.com/folke) for documentation inspiration :)
