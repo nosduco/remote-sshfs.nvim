@@ -30,6 +30,24 @@ describe('remote-sshfs.utils', function()
       assert.is_nil(h['Path'])
       assert.is_nil(h['Port'])
     end)
+
+    it('parses user@host without path or port', function()
+      local cmd = 'user@host'
+      local h = utils.parse_host_from_command(cmd)
+      assert.are.equal('host', h['Name'])
+      assert.are.equal('user', h['User'])
+      assert.is_nil(h['Path'])
+      assert.is_nil(h['Port'])
+    end)
+
+    it('parses host with port only', function()
+      local cmd = 'host -p 2222'
+      local h = utils.parse_host_from_command(cmd)
+      assert.are.equal('host', h['Name'])
+      assert.is_nil(h['User'])
+      assert.is_nil(h['Path'])
+      assert.are.equal('2222', h['Port'])
+    end)
   end)
 
   describe('parse_hosts_from_configs', function()

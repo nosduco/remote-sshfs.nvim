@@ -120,6 +120,10 @@ M.parse_host_from_command = function(command)
     hostname, path = command:match "^([^:]+):?(.*)$"
   end
 
+  if path == "" then
+    path = nil
+  end
+
   host["Name"] = hostname
   host["User"] = user
   host["Path"] = path
