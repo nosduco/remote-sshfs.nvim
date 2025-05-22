@@ -120,7 +120,7 @@ M.parse_host_from_command = function(command)
     hostname, path = command:match "^([^:]+):?(.*)$"
   end
 
-  if path == "" then
+  if not path or path == "" then
     path = nil
   end
 
