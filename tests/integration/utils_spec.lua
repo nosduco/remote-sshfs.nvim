@@ -53,7 +53,7 @@ describe('remote-sshfs.utils', function()
   describe('parse_hosts_from_configs', function()
     local tmpfile
 
-    setup(function()
+    before_each(function()
       local lines = {
         '# test config',
         'Host a b',
@@ -65,7 +65,7 @@ describe('remote-sshfs.utils', function()
       tmpfile:write(table.concat(lines, '\n'))
     end)
 
-    teardown(function()
+    after_each(function()
       tmpfile:rm()
     end)
 
