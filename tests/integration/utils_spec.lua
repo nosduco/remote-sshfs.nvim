@@ -62,7 +62,7 @@ describe('remote-sshfs.utils', function()
         'Host single',
       }
       tmpfile = Path:new(vim.loop.os_tmpdir(), 'ssh_config_test')
-      tmpfile:write(table.concat(lines, '\n'))
+      tmpfile:write(table.concat(lines, '\n'), 'w')
     end)
 
     after_each(function()
