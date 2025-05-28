@@ -40,3 +40,6 @@ luac.out
 *.hex
 
 .nvimlog
+
+# AI things
+CODEX.md
