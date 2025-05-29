@@ -174,6 +174,72 @@ With this plugin you can:
 
 To learn more about SSH configs and how to write/style one you can read more [here](https://linuxize.com/post/using-the-ssh-config-file/)
 
+## 🧩 Status-line integrations
+
+`remote-sshfs.nvim` ships a tiny helper module that exposes the current
+connection (if any) as a **single, reusable component** – so every status-line
+framework can opt-in without additional boiler-plate.
+
+The module returns an **empty string** when no host is mounted which makes it
+safe to drop into existing layouts.
+
+<details>
+<summary><b>NvChad (built-in statusline)</b></summary>
+
+NvChad exposes its UI configuration through the return table of
+`lua/chadrc.lua`.  The snippet below shows a minimal way to **add one custom
+module** (named `remote`) without touching the rest of the default layout.
+
+```lua
+-- ~/.config/nvim/lua/chadrc.lua
+
+local M = {}
+
+-- 1️⃣  Create a callable module for NvChad’s statusline
+local remote_module = require("remote-sshfs.statusline").nvchad_module {
+  highlight = "St_gitIcons", -- highlight group (optional)
+}
+
+--  Option A: use an *existing* highlight group by name (as above).
+--  Option B: provide a colour table and the plugin will create a group for you:
+-- local remote_module = require("remote-sshfs.statusline").nvchad_module {
+--   highlight = { fg = "#6A9955", bold = true },
+-- }
+
+-- 2️⃣  Add it to `modules` *and* reference it in `order`
+M.ui = {
+  statusline = {
+    -- theme / separator_style as you already have…
+
+    -- insert the module name wherever you like
+    order = { "mode", "file", "git", "%=", "lsp_msg", "%=", "diagnostics", "remote", "lsp", "cwd", "cursor" },
+
+    modules = {
+      remote = remote_module,
+    },
+  },
+}
+
+return M
+```
+
+Custom icon:
+
+```lua
+-- has to be set *before* `require("remote-sshfs")` is executed
+vim.g.remote_sshfs_status_icon = ""  -- VS Code-style lock icon
+```
+
+When `RemoteSSHFSConnect` succeeds your status-line reads e.g.
+
+```
+󰀻 myserver
+```
+
+and vanishes as soon as you disconnect.
+
+</details>
+
 ## 🤝 Contributing
 
 If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or additional functionality, please feel free to submit an issue or a pull request. We welcome contributions from the community and are committed to making remote-sshfs.nvim as useful as possible for everyone who uses it.
@@ -182,8 +248,8 @@ If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or a
 
 This repository provides two test suites:
 
-* **Unit tests** – pure-Lua logic, run via [Busted](https://olivinelabs.com/busted/)
-* **Integration tests** – Neovim + [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) harness
+- **Unit tests** – pure-Lua logic, run via [Busted](https://olivinelabs.com/busted/)
+- **Integration tests** – Neovim + [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) harness
 
 ### Unit tests
 
