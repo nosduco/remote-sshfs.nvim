@@ -184,38 +184,50 @@ The module returns an **empty string** when no host is mounted which makes it
 safe to drop into existing layouts.
 
 <details>
-<summary><b>NvChad / Heirline</b></summary>
+<summary><b>NvChad / Heirline (v2.*)</b></summary>
+
+NvChad exposes its UI configuration through the return table of
+`lua/chadrc.lua`.  The snippet below **extends** the default status-line instead
+of replacing it.
 
 ```lua
--- custom/chadrc.lua  (NvChad ≥ v2.*)
+-- ~/.config/nvim/lua/chadrc.lua  (or wherever your NvChad chadrc lives)
 
-local st = require "nvchad.statusline.default"      -- or your own layout table
+local M = {}
 
--- 🔌 add remote-sshfs block (shows: 󰀻 <hostname> when connected)
+-- 1️⃣  Fetch the default lay-out that ships with NvChad
+local default = require "nvchad.statusline.default"
+
+-- 2️⃣  Create the remote-sshfs component (shows: 󰀻 <hostname> while connected)
 local remote = require("remote-sshfs.statusline").nvchad_component {
-  -- optional highlight group
-  highlight = { fg = "green" },
+  highlight = { fg = "green" },   -- (optional) colour override
 }
 
--- place it wherever you like in the active component list
-table.insert(st.active_components, remote)
+-- 3️⃣  Inject it wherever you want. Here we append at the end.
+table.insert(default, remote)
 
-return st
+-- 4️⃣  Expose the modified layout back to NvChad
+M.ui = {
+  statusline = default,
+}
+
+return M
 ```
 
 Custom icon:
 
 ```lua
-vim.g.remote_sshfs_status_icon = "" -- must be set BEFORE the plugin loads
+-- has to be set *before* `require("remote-sshfs")` is executed
+vim.g.remote_sshfs_status_icon = ""
 ```
 
-That’s it! When `RemoteSSHFSConnect` succeeds your status-line will now read
+When `RemoteSSHFSConnect` succeeds your status-line reads e.g.
 
 ```
 󰀻 myserver
 ```
 
-and disappears once you disconnect.
+and vanishes as soon as you disconnect.
 
 </details>
 
