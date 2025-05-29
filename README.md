@@ -187,15 +187,14 @@ safe to drop into existing layouts.
 <summary><b>NvChad (built-in statusline)</b></summary>
 
 NvChad exposes its UI configuration through the return table of
-`lua/chadrc.lua`.  The snippet below **extends** the default status-line instead
-of replacing it.
+`lua/chadrc.lua`.  The snippet below shows a minimal way to **add one custom
+module** (named `remote`) without touching the rest of the default layout.
 
 ```lua
--- ~/.config/nvim/lua/chadrc.lua  (or wherever your NvChad chadrc lives)
+-- ~/.config/nvim/lua/chadrc.lua
 
 local M = {}
 
--- 1️⃣  Fetch the default lay-out that ships with NvChad
 -- 1️⃣  Create a callable module for NvChad’s statusline
 local remote_module = require("remote-sshfs.statusline").nvchad_module {
   highlight = "St_gitIcons", -- highlight group (optional)
