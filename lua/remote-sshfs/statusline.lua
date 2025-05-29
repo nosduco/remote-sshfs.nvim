@@ -66,6 +66,37 @@ function M.nvchad_component(opts)
 end
 
 -------------------------------------------------------------------------------
+-- NvChad (classic v3 statusline) module helper --------------------------------
+-------------------------------------------------------------------------------
+
+-- NvChad’s in-house statusline (documented under `:h nvui.statusline`) expects
+-- plain strings or Lua callables in the `modules` table.  This helper returns
+-- such a callable, so users can simply do
+--
+--   M.ui = {
+--     statusline = {
+--       modules = {
+--         remote = require("remote-sshfs.statusline").nvchad_module(),
+--       }
+--     }
+--   }
+--
+-- `opts.highlight` – optional highlight group name, e.g. "St_gitIcons".
+function M.nvchad_module(opts)
+  opts = opts or {}
+  local hl_begin = opts.highlight and ("%#" .. opts.highlight .. "#") or ""
+  local hl_end = opts.highlight and "%*" or ""
+
+  return function()
+    local s = M.status()
+    if s == "" then
+      return ""
+    end
+    return hl_begin .. s .. hl_end
+  end
+end
+
+-------------------------------------------------------------------------------
 -- Fall-back plain string for easy integration in classic statuslines ---------
 -------------------------------------------------------------------------------
 

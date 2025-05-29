@@ -184,7 +184,7 @@ The module returns an **empty string** when no host is mounted which makes it
 safe to drop into existing layouts.
 
 <details>
-<summary><b>NvChad / Heirline (v2.*)</b></summary>
+<summary><b>NvChad (built-in statusline)</b></summary>
 
 NvChad exposes its UI configuration through the return table of
 `lua/chadrc.lua`.  The snippet below **extends** the default status-line instead
@@ -196,19 +196,23 @@ of replacing it.
 local M = {}
 
 -- 1️⃣  Fetch the default lay-out that ships with NvChad
-local default = require "nvchad.statusline.default"
-
--- 2️⃣  Create the remote-sshfs component (shows: 󰀻 <hostname> while connected)
-local remote = require("remote-sshfs.statusline").nvchad_component {
-  highlight = { fg = "green" },   -- (optional) colour override
+-- 1️⃣  Create a callable module for NvChad’s statusline
+local remote_module = require("remote-sshfs.statusline").nvchad_module {
+  highlight = "St_gitIcons", -- highlight group (optional)
 }
 
--- 3️⃣  Inject it wherever you want. Here we append at the end.
-table.insert(default, remote)
-
--- 4️⃣  Expose the modified layout back to NvChad
+-- 2️⃣  Add it to `modules` *and* reference it in `order`
 M.ui = {
-  statusline = default,
+  statusline = {
+    -- theme / separator_style as you already have…
+
+    -- insert the module name wherever you like
+    order = { "mode", "f", "git", "%=", "remote", "%=", "lsp", "cwd" },
+
+    modules = {
+      remote = remote_module,
+    },
+  },
 }
 
 return M
