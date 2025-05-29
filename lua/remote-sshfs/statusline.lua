@@ -1,35 +1,14 @@
+local helper = require "remote-sshfs.integration"
+
 local M = {}
 
--- Default icon displayed when a connection is active. Nerd-font compatible.
--- Users can override this by setting `vim.g.remote_sshfs_status_icon` before
--- the plugin is loaded or by changing `M.icon` afterwards.
-M.icon = vim.g.remote_sshfs_status_icon or "󰀻" -- nf-mdi-server
+-- Expose icon through the same table (backwards-compat).
+M.icon = helper.icon
 
--- Return a short human-readable string that represents the current connection
--- state. If no connection is active an empty string is returned so that the
--- statusline stays unchanged.
---
--- Examples:
---   ""                    – when not connected
---   "󰀻 myserver"          – when connected to host *myserver*
+-- Delegated helpers ----------------------------------------------------------
+
 function M.status()
-  local ok, conn = pcall(require, "remote-sshfs.connections")
-  if not ok or type(conn) ~= "table" then
-    return ""
-  end
-
-  if not conn.is_connected or not conn.is_connected() then
-    return ""
-  end
-
-  local host_tbl = conn.get_current_host and conn.get_current_host() or nil
-  local name = "remote"
-  if host_tbl and type(host_tbl) == "table" then
-    -- Prefer the explicit entries we create while parsing the ssh-config.
-    name = host_tbl.Name or host_tbl.Host or host_tbl.host or name
-  end
-
-  return string.format("%s %s", M.icon, name)
+  return helper.label() or ""
 end
 
 -------------------------------------------------------------------------------

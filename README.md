@@ -240,6 +240,40 @@ and vanishes as soon as you disconnect.
 
 </details>
 
+### File-browser / tree integrations
+
+<details>
+<summary><b>Oil.nvim</b></summary>
+
+`remote-sshfs.nvim` also provides convenience helpers for
+[oil.nvim](https://github.com/stevearc/oil.nvim):
+
+```lua
+-- lua/plugins/oil.lua  /  wherever you configure oil.nvim
+
+require("oil").setup {
+  columns = {
+    "icon",
+    require("remote-sshfs.filebrowser.oil").column { hl = "DiagnosticHint" },
+    "mtime",
+  },
+}
+
+-- Alternatively (or additionally) show the host in the win-bar of every Oil
+-- buffer:
+require("remote-sshfs.filebrowser.oil").attach_winbar { hl = "DiagnosticHint" }
+```
+
+Result (only while connected):
+
+```
+󰀻 myserver   … <directory listing follows>
+```
+
+The helpers automatically hide themselves when you disconnect.
+
+</details>
+
 ## 🤝 Contributing
 
 If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or additional functionality, please feel free to submit an issue or a pull request. We welcome contributions from the community and are committed to making remote-sshfs.nvim as useful as possible for everyone who uses it.
