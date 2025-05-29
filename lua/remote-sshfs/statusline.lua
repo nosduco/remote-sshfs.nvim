@@ -84,8 +84,31 @@ end
 -- `opts.highlight` – optional highlight group name, e.g. "St_gitIcons".
 function M.nvchad_module(opts)
   opts = opts or {}
-  local hl_begin = opts.highlight and ("%#" .. opts.highlight .. "#") or ""
-  local hl_end = opts.highlight and "%*" or ""
+
+  -- Determine highlight behaviour.
+  -- 1) string  → assume existing highlight group name
+  -- 2) table   → dynamically create a group once and use it
+  -- 3) nil     → no colour decorations
+  local hl_begin, hl_end = "", ""
+
+  if opts.highlight then
+    local group_name
+
+    if type(opts.highlight) == "string" then
+      group_name = opts.highlight
+    elseif type(opts.highlight) == "table" then
+      group_name = "RemoteSSHFSStl"
+      -- Only define once per session.
+      if vim.fn.hlexists(group_name) == 0 then
+        vim.api.nvim_set_hl(0, group_name, opts.highlight)
+      end
+    end
+
+    if group_name then
+      hl_begin = "%#" .. group_name .. "#"
+      hl_end = "%*"
+    end
+  end
 
   return function()
     local s = M.status()
