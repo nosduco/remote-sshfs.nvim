@@ -26,8 +26,8 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-ss
 
 ### Local Machine
 
- - [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
- - Check health: run `:checkhealth remote-sshfs` in Neovim to verify that `sshfs` and unmount tools are installed
+- [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
+- Check health: run `:checkhealth remote-sshfs` in Neovim to verify that `sshfs` and unmount tools are installed
 - [ssh](https://en.wikipedia.org/wiki/Secure_Shell): for secure shell connections to remote hosts
 
 ### Remote Machine
@@ -181,6 +181,7 @@ If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or a
 ## 🧪 Testing
 
 This plugin includes:
+
 - Pure Lua unit tests for logic functions via [Busted](https://olivinelabs.com/busted/).
 - Integration tests via [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) harness.
 
@@ -190,13 +191,42 @@ To run unit tests (pure Lua logic):
 
 To run integration tests headlessly from the shell:
 
-  nvim --headless \\
-    -u NONE \\
-    -i NONE \\
-    -c 'set rtp+=.' \\
-    -c 'packadd plenary.nvim' \\
-    -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \\
+# Make sure plenary.nvim is on Neovim's 'runtimepath'
+
+# If you normally load plenary through a lazy-loader (Lazy.nvim, Packer, etc.)
+
+# it will NOT be on the path for this minimal headless session
+
+# Quick one-liner to clone plenary where Neovim will find it
+
+# git clone <https://github.com/nvim-lua/plenary.nvim> \
+
+# "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/vendor/start/plenary.nvim
+
+  nvim --headless \
+    -u NONE -i NONE \
+    -c 'set rtp+=.' \
+    -c 'packadd plenary.nvim' \
+    -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \
     -c 'qa!'
+
+# Alternative: use your **normal** Neovim config so that your plugin
+
+# manager (Lazy.nvim, Packer, etc.) loads plenary automatically.  In
+
+# that case you can drop the -u NONE / packadd bits entirely
+
+# nvim --headless \
+
+# -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \
+
+# -c 'qa!'
+
+# This is quicker if plenary is already managed by your setup, but
+
+# remember it will load **all** of your plugins and user mappings
+
+# which may introduce unrelated noise into the test run
 
 ## 🐞 Gotchas
 
