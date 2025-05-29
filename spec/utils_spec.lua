@@ -10,8 +10,11 @@ describe("remote-sshfs.utils", function()
     before_each(function()
       orig_vim = _G.vim
       _G.vim = { loop = {}, notify = function() end }
-      _G.vim.loop.fs_stat = function(path) return nil end
-      _G.vim.loop.fs_mkdir = function(path, mode) created_path = path; return true end
+      _G.vim.loop.fs_stat = function() return nil end
+      _G.vim.loop.fs_mkdir = function(path, _mode)
+        created_path = path
+        return true
+      end
     end)
     after_each(function()
       _G.vim = orig_vim
@@ -54,7 +57,10 @@ describe("remote-sshfs.utils", function()
       created_path = nil
       callback_ok = false
       _G.vim.loop.fs_stat = function() return nil, 'err' end
-      _G.vim.loop.fs_mkdir = function(path, mode) created_path = path; return true end
+      _G.vim.loop.fs_mkdir = function(path, _mode)
+        created_path = path
+        return true
+      end
     end)
     after_each(function()
       _G.vim = orig_vim
@@ -82,7 +88,10 @@ describe("remote-sshfs.utils", function()
       _G.vim = { loop = {}, notify = function() end }
       removed_path = nil
       callback_ok = false
-      _G.vim.loop.fs_rmdir = function(path) removed_path = path; return true end
+      _G.vim.loop.fs_rmdir = function(path)
+        removed_path = path
+        return true
+      end
     end)
     after_each(function()
       _G.vim = orig_vim

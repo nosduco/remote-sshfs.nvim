@@ -11,11 +11,23 @@ describe("remote-sshfs.ui", function()
       ui = {},
       schedule = function(fn) fn() end,
       cmd = function(cmd) _G.vim._cmd = cmd end,
-      api = { nvim_replace_termcodes = function(str) return str end, nvim_feedkeys = function(keys, mode) _G.vim._feed = {keys, mode} end },
+      api = {
+        nvim_replace_termcodes = function(str)
+          return str
+        end,
+        nvim_feedkeys = function(keys, mode)
+          _G.vim._feed = { keys, mode }
+        end,
+      },
       opt = { cmdheight = { _value = 1 } },
     }
-    _G.vim.ui.select = function(items, opts, cb) cb("selected") end
-    _G.vim.ui.input = function(opts, cb) cb("inputted") end
+    -- _items/_opts underscore prefixes silence luacheck unused warnings.
+    _G.vim.ui.select = function(_items, _opts, cb)
+      cb("selected")
+    end
+    _G.vim.ui.input = function(_opts, cb)
+      cb("inputted")
+    end
   end)
 
   after_each(function()
