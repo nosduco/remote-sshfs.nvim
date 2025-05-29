@@ -26,8 +26,8 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-ss
 
 ### Local Machine
 
- - [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
- - Check health: run `:checkhealth remote-sshfs` in Neovim to verify that `sshfs` and unmount tools are installed
+- [sshfs](https://github.com/libfuse/sshfs): for mounting the remote filesystem
+- Check health: run `:checkhealth remote-sshfs` in Neovim to verify that `sshfs` and unmount tools are installed
 - [ssh](https://en.wikipedia.org/wiki/Secure_Shell): for secure shell connections to remote hosts
 
 ### Remote Machine
@@ -43,12 +43,12 @@ Install using your favorite package manager
 ```lua
 // Using lazy.nvim
 return {
- "nosduco/remote-sshfs.nvim",
- dependencies = { "nvim-telescope/telescope.nvim" },
- opts = {
-  -- Refer to the configuration section below
-  -- or leave empty for defaults
- },
+  "nosduco/remote-sshfs.nvim",
+  dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+  opts = {
+    -- Refer to the configuration section below
+    -- or leave empty for defaults
+  },
 }
 ```
 
@@ -177,6 +177,62 @@ To learn more about SSH configs and how to write/style one you can read more [he
 ## 🤝 Contributing
 
 If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or additional functionality, please feel free to submit an issue or a pull request. We welcome contributions from the community and are committed to making remote-sshfs.nvim as useful as possible for everyone who uses it.
+
+## 🧪 Testing
+
+This plugin includes:
+
+- Pure Lua unit tests for logic functions via [Busted](https://olivinelabs.com/busted/).
+- Integration tests via [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) harness.
+
+To run unit tests (pure Lua logic):
+
+  busted
+
+To run integration tests headlessly from the shell:
+
+# Make sure plenary.nvim is on Neovim's 'runtimepath'
+
+# If you normally load plenary through a lazy-loader (Lazy.nvim, Packer, etc.)
+
+# it will NOT be on the path for this minimal headless session
+
+# Quick one-liner to clone plenary where Neovim will find it
+
+# git clone <https://github.com/nvim-lua/plenary.nvim> \
+
+# "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/vendor/start/plenary.nvim
+
+  nvim --headless \
+    -u NONE -i NONE \
+    -c 'set rtp+=.' \
+    -c 'packadd plenary.nvim' \
+    -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \
+    -c 'qa!'
+
+# Alternative: use your **normal** Neovim config so that your plugin
+
+# manager (Lazy.nvim, Packer, etc.) loads plenary automatically.  In
+
+# that case you can drop the -u NONE / packadd bits entirely
+
+# nvim --headless \
+
+# -c 'lua require("plenary.test_harness").test_directory("tests/integration")' \
+
+# -c 'qa!'
+
+# This is quicker if plenary is already managed by your setup, but
+
+# remember it will load **all** of your plugins and user mappings
+
+# which may introduce unrelated noise into the test run
+
+## 🐞 Gotchas
+
+- Password handling: When key-based authentication isn't used, you'll be prompted to enter a password/passphrase, which is piped to `sshfs -o password_stdin`. Ensure your SSH server allows password auth or use an SSH agent.
+- Default mount directory: By default, mounts go into `~/.sshfs/<host>/`. Override `mounts.base_dir` in your setup if you'd like a different location.
+- Key-based authentication: This plugin relies on your local SSH config and agent for auth. Make sure `ssh-agent` is running and your keys are loaded, or configure `IdentityFile` in your SSH config.
 
 ## 🌟 Credits
 
