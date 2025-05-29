@@ -174,6 +174,52 @@ With this plugin you can:
 
 To learn more about SSH configs and how to write/style one you can read more [here](https://linuxize.com/post/using-the-ssh-config-file/)
 
+## 🧩 Status-line integrations
+
+`remote-sshfs.nvim` ships a tiny helper module that exposes the current
+connection (if any) as a **single, reusable component** – so every status-line
+framework can opt-in without additional boiler-plate.
+
+The module returns an **empty string** when no host is mounted which makes it
+safe to drop into existing layouts.
+
+<details>
+<summary><b>NvChad / Heirline</b></summary>
+
+```lua
+-- custom/chadrc.lua  (NvChad ≥ v2.*)
+
+local st = require "nvchad.statusline.default"      -- or your own layout table
+
+-- 🔌 add remote-sshfs block (shows: 󰀻 <hostname> when connected)
+local remote = require("remote-sshfs.statusline").nvchad_component {
+  -- optional highlight group
+  highlight = { fg = "green" },
+}
+
+-- place it wherever you like in the active component list
+table.insert(st.active_components, remote)
+
+return st
+```
+
+Custom icon:
+
+```lua
+vim.g.remote_sshfs_status_icon = "" -- must be set BEFORE the plugin loads
+```
+
+That’s it! When `RemoteSSHFSConnect` succeeds your status-line will now read
+
+```
+󰀻 myserver
+```
+
+and disappears once you disconnect.
+
+</details>
+
+
 ## 🤝 Contributing
 
 If you find a bug or have a suggestion for how to improve remote-sshfs.nvim or additional functionality, please feel free to submit an issue or a pull request. We welcome contributions from the community and are committed to making remote-sshfs.nvim as useful as possible for everyone who uses it.
