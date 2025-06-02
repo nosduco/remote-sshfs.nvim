@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.4.0...v0.5.0) (2025-05-29)
+
+
+### Features
+
+* nvchad statusline integration ([#45](https://github.com/nosduco/remote-sshfs.nvim/issues/45)) ([1307b36](https://github.com/nosduco/remote-sshfs.nvim/commit/1307b3645af5ce60b9e42f06d27eb5a1fab18fc7))
+
+
+### Testing
+
+* add initial tests ([#43](https://github.com/nosduco/remote-sshfs.nvim/issues/43)) ([8ab99f5](https://github.com/nosduco/remote-sshfs.nvim/commit/8ab99f5371723fc4d41ceba538116b947b29fae2))
+
 ## [0.4.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.3.6...v0.4.0) (2025-05-20)
 
 
