@@ -56,7 +56,7 @@ local function connect(_)
       finder = finders.new_table {
         results = vim.tbl_keys(hosts),
       },
-      sorter = sorters.get_generic_fuzzy_sorter(),
+      sorter = sorters.get_fzy_sorter(),
       attach_mappings = function(prompt_bufnr, _)
         actions.select_default:replace(function()
           actions.close(prompt_bufnr)
@@ -109,7 +109,7 @@ local function edit_config(_)
       finder = finders.new_table {
         results = ssh_configs,
       },
-      sorter = sorters.get_generic_fuzzy_sorter(),
+      sorter = sorters.get_fzy_sorter(),
     })
     :find()
 end
