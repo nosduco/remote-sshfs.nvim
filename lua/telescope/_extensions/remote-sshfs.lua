@@ -65,6 +65,10 @@ local function connect(_)
           local host = hosts[selection[1]]
 
           connections.connect(host)
+
+          vim.schedule(function()
+            vim.cmd "stopinsert"
+          end)
         end)
         return true
       end,
