@@ -7,6 +7,7 @@ local default_opts = {
       "/etc/ssh/ssh_config",
       -- "/path/to/custom/ssh_config"
     },
+    ssh_known_hosts = vim.fn.expand "$HOME" .. "/.ssh/known_hosts",
     sshfs_args = {
       "-o reconnect",
       "-o ConnectTimeout=5",
