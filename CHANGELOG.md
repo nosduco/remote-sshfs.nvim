@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.5.0...v0.6.0) (2025-07-31)
+
+
+### Features
+
+* change sorter to get_fzy_sorter() ([#51](https://github.com/nosduco/remote-sshfs.nvim/issues/51)) ([ee63d7c](https://github.com/nosduco/remote-sshfs.nvim/commit/ee63d7c09128659c9e18bfb744a6e47b927be7d1))
+
+
+### Bug Fixes
+
+* go back to normal mode when connect ([#52](https://github.com/nosduco/remote-sshfs.nvim/issues/52)) ([9f97150](https://github.com/nosduco/remote-sshfs.nvim/commit/9f9715077788195213b640518f8a2cde48149d86))
+
 ## [0.5.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.4.0...v0.5.0) (2025-05-29)
 
 
