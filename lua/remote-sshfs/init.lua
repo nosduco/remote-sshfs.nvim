@@ -43,6 +43,9 @@ local default_opts = {
       sshfs = false,
     },
   },
+  callback = {
+    on_connect_success = function(_, _) end,
+  },
 }
 
 M.setup_commands = function()
