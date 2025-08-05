@@ -81,6 +81,8 @@ end
 M.setup = function(config)
   local opts = config and vim.tbl_deep_extend("force", default_opts, config) or default_opts
 
+  M.config = opts
+
   require("remote-sshfs.connections").setup(opts)
   require("remote-sshfs.ui").setup(opts)
   require("remote-sshfs.handler").setup(opts)
