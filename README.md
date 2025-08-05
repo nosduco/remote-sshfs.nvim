@@ -1,9 +1,6 @@
 
 # 🌐 remote-sshfs.nvim [![Actions status](https://github.com/nosduco/remote-sshfs.nvim/workflows/CI/badge.svg)](https://github.com/nosduco/remote-sshfs.nvim/actions)
 
-🚧 **This plugin is currently being developed and may
-break or change frequently!** 🚧
-
 Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-sshfs.nvim` allows you to edit files on remote hosts via SSHFS as if they were local.
 
 ![Demo](https://github.com/nosduco/remote-sshfs.nvim/blob/main/demo.gif)
