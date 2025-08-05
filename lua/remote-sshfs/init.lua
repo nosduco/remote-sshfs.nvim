@@ -43,16 +43,24 @@ local default_opts = {
       sshfs = false,
     },
   },
+  picker = "fzf"
 }
 
-M.setup_commands = function()
+M.setup_commands = function(config)
+  local picker
+  if config.picker == "fzf" then
+      picker = require("../fzf/remote-sshfs")
+  else
+      picker = require("telescope").extensions["remote-sshfs"]
+  end
+
   -- Create commands to connect/edit/reload/disconnect/find_files/live_grep
   vim.api.nvim_create_user_command("RemoteSSHFSConnect", function(opts)
     if opts.args and opts.args ~= "" then
       local host = require("remote-sshfs.utils").parse_host_from_command(opts.args)
       require("remote-sshfs.connections").connect(host)
     else
-      require("telescope").extensions["remote-sshfs"].connect()
+      picker.connect()
     end
   end, {
     nargs = "?",
@@ -62,7 +70,7 @@ M.setup_commands = function()
     end,
   })
   vim.api.nvim_create_user_command("RemoteSSHFSEdit", function()
-    require("telescope").extensions["remote-sshfs"].edit()
+    picker.edit()
   end, {})
   vim.api.nvim_create_user_command("RemoteSSHFSReload", function()
     require("remote-sshfs.connections").reload()
@@ -71,10 +79,10 @@ M.setup_commands = function()
     require("remote-sshfs.connections").unmount_host()
   end, {})
   vim.api.nvim_create_user_command("RemoteSSHFSFindFiles", function()
-    require("telescope").extensions["remote-sshfs"].find_files {}
+    picker.find_files {}
   end, {})
   vim.api.nvim_create_user_command("RemoteSSHFSLiveGrep", function()
-    require("telescope").extensions["remote-sshfs"].live_grep {}
+    picker.live_grep {}
   end, {})
 end
 
@@ -88,7 +96,7 @@ M.setup = function(config)
   require("remote-sshfs.handler").setup(opts)
   require("remote-sshfs.log").setup(opts)
 
-  M.setup_commands()
+  M.setup_commands(opts)
 end
 
 return M
