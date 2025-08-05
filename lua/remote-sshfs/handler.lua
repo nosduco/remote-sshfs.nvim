@@ -4,7 +4,7 @@ local log = require "remote-sshfs.log"
 
 local M = {}
 
-M.sshfs_wrapper = function(data, mount_dir, callback)
+M.sshfs_wrapper = function(data, host, mount_dir, callback)
   local output = table.concat(data, "\n")
   log.line("sshfs", output)
   if output == "" or string.match(output, "read:") then
@@ -13,7 +13,7 @@ M.sshfs_wrapper = function(data, mount_dir, callback)
   if string.match(output, "ssh_askpass") then
     M.askpass_handler(callback)
   elseif string.match(output, "Authenticated") then
-    M.authenticated_handler(mount_dir)
+    M.authenticated_handler(host, mount_dir)
   else
     vim.notify("Connection failed: " .. string.gsub(tostring(output), "\r\n", ""))
   end
@@ -33,7 +33,7 @@ M.askpass_handler = function(callback)
   callback "ask_pass"
 end
 
-M.authenticated_handler = function(mount_dir)
+M.authenticated_handler = function(host, mount_dir)
   vim.notify "Connected to host succesfully."
 
   if M.change_dir then
@@ -49,6 +49,8 @@ M.authenticated_handler = function(mount_dir)
       utils.change_directory(mount_dir)
     end
   end
+
+  require("remote-sshfs").callback.on_connect_success:trigger(host, mount_dir)
 end
 
 M.setup = function(opts)
