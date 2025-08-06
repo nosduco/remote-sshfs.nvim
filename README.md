@@ -174,6 +174,26 @@ With this plugin you can:
 
 To learn more about SSH configs and how to write/style one you can read more [here](https://linuxize.com/post/using-the-ssh-config-file/)
 
+
+### 🔔 Callback
+
+You can manage callbacks on events like `on_connect_success` using the following methods:
+
+- `:add(fn)`: Add a callback function to the event.
+- `:set(fn)`: Replace all existing callbacks with a new function.
+- `:trigger(...)`: Manually invoke all registered callbacks with arguments.
+
+Example:
+
+```lua
+require("remote-sshfs").callback.on_connect_success:add(function(host, mount_dir)
+  vim.notify("Mounted " .. host .. " at " .. mount_dir)
+end)
+```
+
+All added callbacks will be triggered when the event occurs.
+
+
 ## 🧩 Status-line integrations
 
 `remote-sshfs.nvim` ships a tiny helper module that exposes the current
