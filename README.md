@@ -73,6 +73,7 @@ require('remote-sshfs').setup{
       "/etc/ssh/ssh_config",
       -- "/path/to/custom/ssh_config"
     },
+    ssh_known_hosts = vim.fn.expand "$HOME" .. "/.ssh/known_hosts",
     -- NOTE: Can define ssh_configs similarly to include all configs in a folder
     -- ssh_configs = vim.split(vim.fn.globpath(vim.fn.expand "$HOME" .. "/.ssh/configs", "*"), "\n")
     sshfs_args = { -- arguments to pass to the sshfs command
@@ -291,6 +292,7 @@ Using the full config is quicker if plenary is already managed by your setup, bu
 - Password handling: When key-based authentication isn't used, you'll be prompted to enter a password/passphrase, which is piped to `sshfs -o password_stdin`. Ensure your SSH server allows password auth or use an SSH agent.
 - Default mount directory: By default, mounts go into `~/.sshfs/<host>/`. Override `mounts.base_dir` in your setup if you'd like a different location.
 - Key-based authentication: This plugin relies on your local SSH config and agent for auth. Make sure `ssh-agent` is running and your keys are loaded, or configure `IdentityFile` in your SSH config.
+- Known hosts management: If the target host is not already listed in `known_hosts`, the user will be prompted with its fingerprint and given the choice to trust and store it.
 
 ## 🌟 Credits
 
