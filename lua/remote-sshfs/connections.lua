@@ -161,16 +161,11 @@ M.mount_host = function(host, mount_dir, ask_pass)
     fingerprint = fingerprint:gsub("\n", "")
 
     local prompt = string.format(
-      [[
-The authenticity of host '%s' can't be established.
-%s
-Add this host key to %s?
-]],
+      "The authenticity of host '%s' can't be established. %s Add this host key to %s? (y/n)",
       hostname,
       fingerprint,
       ssh_known_hosts
     )
-
     vim.schedule(function()
       ui.prompt_yes_no(prompt, function(item_short)
         ui.clear_prompt()
