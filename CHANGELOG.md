@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.6.0...v0.7.0) (2025-08-07)
+
+
+### Features
+
+* add on_connect_success callback to be used in config ([#54](https://github.com/nosduco/remote-sshfs.nvim/issues/54)) ([a2f3f14](https://github.com/nosduco/remote-sshfs.nvim/commit/a2f3f144ee1b594d40414ddfbfba2be69198da7a))
+* add SSH known hosts prompt handling ([#55](https://github.com/nosduco/remote-sshfs.nvim/issues/55)) ([7ba04a9](https://github.com/nosduco/remote-sshfs.nvim/commit/7ba04a9a26c59d2871012bd610bc333cb2a6cb98))
+
+
+### Bug Fixes
+
+* expose config via lua ([#56](https://github.com/nosduco/remote-sshfs.nvim/issues/56)) ([efd9d2a](https://github.com/nosduco/remote-sshfs.nvim/commit/efd9d2a477d1ba59829fe3e8d2001f1449362088))
+
 ## [0.6.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.5.0...v0.6.0) (2025-07-31)
 
 
