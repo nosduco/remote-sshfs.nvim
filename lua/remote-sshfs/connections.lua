@@ -138,7 +138,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
     local spec_host = host
     local id = vim.fn.jobstart(cmd, {
       on_stdout = function(_, data)
-        handler.sshfs_wrapper(data, mount_dir, function(event)
+        handler.sshfs_wrapper(data, host, mount_dir, function(event)
           if event == "ask_pass" then
             skip_clean = true
             M.init_host(host, true)
@@ -146,7 +146,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
         end)
       end,
       on_stderr = function(_, data)
-        handler.sshfs_wrapper(data, mount_dir, function(event)
+        handler.sshfs_wrapper(data, host, mount_dir, function(event)
           if event == "ask_pass" then
             skip_clean = true
             M.init_host(host, true)

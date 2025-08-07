@@ -45,6 +45,13 @@ local default_opts = {
   },
 }
 
+local utils = require "remote-sshfs.utils"
+local CallbackList = utils.CallbackList
+
+M.callback = {
+  on_connect_success = CallbackList:new(),
+}
+
 M.setup_commands = function()
   -- Create commands to connect/edit/reload/disconnect/find_files/live_grep
   vim.api.nvim_create_user_command("RemoteSSHFSConnect", function(opts)

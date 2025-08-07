@@ -150,4 +150,26 @@ M.change_directory = function(path)
   vim.notify("Directory changed to " .. path)
 end
 
+-- CallbackList class
+M.CallbackList = {}
+M.CallbackList.__index = M.CallbackList
+
+function M.CallbackList:new()
+  return setmetatable({ _list = {} }, self)
+end
+
+function M.CallbackList:add(fn)
+  table.insert(self._list, fn)
+end
+
+function M.CallbackList:set(fn)
+  self._list = { fn }
+end
+
+function M.CallbackList:trigger(...)
+  for _, fn in ipairs(self._list) do
+    fn(...)
+  end
+end
+
 return M
