@@ -5,6 +5,7 @@ local handler = require "remote-sshfs.handler"
 local config = {}
 local hosts = {}
 local ssh_configs = {}
+local ssh_known_hosts = nil
 local sshfs_args = {}
 
 -- Current connection
@@ -18,6 +19,7 @@ M.setup = function(opts)
   config = opts
   utils.setup_sshfs(config)
   ssh_configs = config.connections.ssh_configs
+  ssh_known_hosts = config.connections.ssh_known_hosts
   sshfs_args = config.connections.sshfs_args
   hosts = utils.parse_hosts_from_configs(ssh_configs)
 end
@@ -131,6 +133,58 @@ M.mount_host = function(host, mount_dir, ask_pass)
   -- Mount point
   table.insert(cmd, mount_dir)
 
+  local function ensure_ssh_host_key(callback)
+    assert(ssh_known_hosts, "ssh_known_hosts is required")
+
+    local hostname = host["HostName"] or host["Name"]
+
+    -- Check if host is known
+    local known_info = vim.fn.system { "ssh-keygen", "-F", hostname, "-f", ssh_known_hosts }
+    if known_info:find "found" then
+      print("Host key for " .. hostname .. " already known.")
+      callback()
+      return true
+    end
+
+    -- Get fingerprint
+    local scan = vim.fn.system("ssh-keyscan -t ed25519 " .. hostname .. " 2>/dev/null")
+    if scan == "" then
+      vim.notify("Could not get fingerprint for " .. hostname, vim.log.levels.ERROR)
+      return false
+    end
+
+    local fingerprint = vim.fn.system('echo "' .. scan .. '" | ssh-keygen -lf -')
+    if fingerprint == "" then
+      vim.notify("Could not parse fingerprint for " .. hostname, vim.log.levels.ERROR)
+      return false
+    end
+    fingerprint = fingerprint:gsub("\n", "")
+
+    local prompt = string.format(
+      "The authenticity of host '%s' can't be established. %s Add this host key to %s? (y/n)",
+      hostname,
+      fingerprint,
+      ssh_known_hosts
+    )
+    vim.schedule(function()
+      ui.prompt_yes_no(prompt, function(item_short)
+        ui.clear_prompt()
+        if item_short == "y" then
+          local scan_cmd = string.format("ssh-keyscan %s >> %s", hostname, ssh_known_hosts)
+          local result = vim.fn.system(scan_cmd)
+          if vim.v.shell_error == 0 then
+            vim.notify("Host key added for " .. hostname, vim.log.levels.INFO)
+            callback()
+          else
+            vim.notify("Failed to add host key for " .. hostname .. "\n" .. result, vim.log.levels.ERROR)
+          end
+        else
+          vim.notify("Aborted adding host key for " .. hostname, vim.log.levels.WARN)
+        end
+      end)
+    end)
+  end
+
   local function start_job()
     vim.notify("Connecting to host (" .. (host["Name"] or target_host) .. ")...")
     local skip_clean = false
@@ -176,7 +230,9 @@ M.mount_host = function(host, mount_dir, ask_pass)
       vim.fn.chansend(id, password .. "\n")
     end
   end
-  start_job()
+  ensure_ssh_host_key(function()
+    start_job()
+  end)
 end
 
 M.unmount_host = function()
