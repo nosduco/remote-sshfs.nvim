@@ -137,31 +137,62 @@ M.mount_host = function(host, mount_dir, ask_pass)
     assert(ssh_known_hosts, "ssh_known_hosts is required")
 
     local hostname = host["HostName"] or host["Name"]
+    
+    -- Build the hostname string for known_hosts lookup
+    local lookup_host = hostname
+    if host["Port"] and host["Port"] ~= "22" then
+      lookup_host = "[" .. hostname .. "]:" .. host["Port"]
+    end
 
     -- Check if host is known
-    local known_info = vim.fn.system { "ssh-keygen", "-F", hostname, "-f", ssh_known_hosts }
+    local known_info = vim.fn.system { "ssh-keygen", "-F", lookup_host, "-f", ssh_known_hosts }
     if known_info:find "found" then
-      print("Host key for " .. hostname .. " already known.")
       callback()
-      return true
+      return
     end
 
-    -- Get fingerprint
-    local scan = vim.fn.system("ssh-keyscan -t ed25519 " .. hostname .. " 2>/dev/null")
-    if scan == "" then
-      vim.notify("Could not get fingerprint for " .. hostname, vim.log.levels.ERROR)
-      return false
+    -- Get all available key types from the host
+    local scan_cmd = { "ssh-keyscan" }
+    if host["Port"] then
+      table.insert(scan_cmd, "-p")
+      table.insert(scan_cmd, host["Port"])
+    end
+    table.insert(scan_cmd, hostname)
+    
+    local scan_result = vim.fn.system(scan_cmd)
+    if vim.v.shell_error ~= 0 or scan_result == "" then
+      vim.notify("Could not retrieve host keys for " .. hostname, vim.log.levels.ERROR)
+      return
     end
 
-    local fingerprint = vim.fn.system('echo "' .. scan .. '" | ssh-keygen -lf -')
-    if fingerprint == "" then
+    -- Parse the first key to get its fingerprint
+    local first_key_line = vim.split(scan_result, "\n")[1]
+    if not first_key_line or first_key_line == "" then
+      vim.notify("No valid host keys found for " .. hostname, vim.log.levels.ERROR)
+      return
+    end
+
+    -- Create temporary file to get fingerprint
+    local temp_file = vim.fn.tempname()
+    local temp_handle = io.open(temp_file, "w")
+    if not temp_handle then
+      vim.notify("Could not create temporary file for fingerprint verification", vim.log.levels.ERROR)
+      return
+    end
+    temp_handle:write(first_key_line .. "\n")
+    temp_handle:close()
+
+    local fingerprint = vim.fn.system { "ssh-keygen", "-lf", temp_file }
+    vim.fn.delete(temp_file)
+
+    if vim.v.shell_error ~= 0 or fingerprint == "" then
       vim.notify("Could not parse fingerprint for " .. hostname, vim.log.levels.ERROR)
-      return false
+      return
     end
     fingerprint = fingerprint:gsub("\n", "")
 
     local prompt = string.format(
-      "The authenticity of host '%s' can't be established. %s Add this host key to %s? (y/n)",
+      "The authenticity of host '%s' can't be established.\n%s\nAdd this host key to %s? (y/n)",
       hostname,
       fingerprint,
       ssh_known_hosts
@@ -170,13 +201,29 @@ M.mount_host = function(host, mount_dir, ask_pass)
       ui.prompt_yes_no(prompt, function(item_short)
         ui.clear_prompt()
         if item_short == "y" then
-          local scan_cmd = string.format("ssh-keyscan %s >> %s", hostname, ssh_known_hosts)
-          local result = vim.fn.system(scan_cmd)
-          if vim.v.shell_error == 0 then
-            vim.notify("Host key added for " .. hostname, vim.log.levels.INFO)
-            callback()
+          local scan_cmd_final = { "ssh-keyscan" }
+          if host["Port"] then
+            table.insert(scan_cmd_final, "-p")
+            table.insert(scan_cmd_final, host["Port"])
+          end
+          table.insert(scan_cmd_final, hostname)
+          
+          local result = vim.fn.system(scan_cmd_final)
+          if vim.v.shell_error == 0 and result ~= "" then
+            local file_handle = io.open(ssh_known_hosts, "a")
+            if file_handle then
+              file_handle:write(result)
+              if not result:match("\n$") then
+                file_handle:write("\n")
+              end
+              file_handle:close()
+              vim.notify("Host key added for " .. hostname, vim.log.levels.INFO)
+              callback()
+            else
+              vim.notify("Failed to write to " .. ssh_known_hosts, vim.log.levels.ERROR)
+            end
           else
-            vim.notify("Failed to add host key for " .. hostname .. "\n" .. result, vim.log.levels.ERROR)
+            vim.notify("Failed to retrieve host key for " .. hostname, vim.log.levels.ERROR)
           end
         else
           vim.notify("Aborted adding host key for " .. hostname, vim.log.levels.WARN)
