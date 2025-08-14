@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.7.0...v0.7.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* host verification on custom ssh port ([d78933a](https://github.com/nosduco/remote-sshfs.nvim/commit/d78933aa69dc44a15386ff25a91b2908d49fc363))
+
 ## [0.7.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.6.0...v0.7.0) (2025-08-07)
 
 
