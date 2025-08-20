@@ -137,7 +137,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
     assert(ssh_known_hosts, "ssh_known_hosts is required")
 
     local hostname = host["HostName"] or host["Name"]
-    
+
     -- Build the hostname string for known_hosts lookup
     local lookup_host = hostname
     if host["Port"] and host["Port"] ~= "22" then
@@ -158,7 +158,7 @@ M.mount_host = function(host, mount_dir, ask_pass)
       table.insert(scan_cmd, host["Port"])
     end
     table.insert(scan_cmd, hostname)
-    
+
     local scan_result = vim.fn.system(scan_cmd)
     if vim.v.shell_error ~= 0 or scan_result == "" then
       vim.notify("Could not retrieve host keys for " .. hostname, vim.log.levels.ERROR)
@@ -207,14 +207,14 @@ M.mount_host = function(host, mount_dir, ask_pass)
             table.insert(scan_cmd_final, host["Port"])
           end
           table.insert(scan_cmd_final, hostname)
-          
+
           local result = vim.fn.system(scan_cmd_final)
           if vim.v.shell_error == 0 and result ~= "" then
             local file_handle = io.open(ssh_known_hosts, "a")
             if file_handle then
               file_handle:write(result)
-              if not result:match("\n$") then
-                file_handle:write("\n")
+              if not result:match "\n$" then
+                file_handle:write "\n"
               end
               file_handle:close()
               vim.notify("Host key added for " .. hostname, vim.log.levels.INFO)
