@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.7.1...v0.7.2) (2025-08-20)
+
+
+### Miscellaneous Tasks
+
+* fix linting ([625ff29](https://github.com/nosduco/remote-sshfs.nvim/commit/625ff29c6d9b2f8c173d571f1bd2e18c138d14b5))
+
 ## [0.7.1](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.7.0...v0.7.1) (2025-08-14)
 
 
