@@ -146,12 +146,8 @@ end
 
 M.change_directory = function(path)
   -- Change the working directory of the Vim instance
-  if vim.api and vim.api.nvim_set_current_dir then
-    log.line("utils", "changing dir with nvim api")
-    vim.api.nvim_set_current_dir(path)
-  else
-    vim.fn.execute("cd " .. path)
-  end
+  vim.fn.execute("cd " .. path)
+  vim.cmd('edit .')
   vim.notify("Directory changed to " .. path)
 end
 
