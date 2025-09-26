@@ -37,7 +37,6 @@ M.authenticated_handler = function(host, mount_dir)
   vim.notify "Connected to host succesfully."
 
   if M.change_dir then
-    vim.notify "change_dir is true"
     log.line("handler", "change_dir is true")
     if M.confirm_change_dir then
       local prompt = "Change current directory to remote server?"
@@ -48,7 +47,9 @@ M.authenticated_handler = function(host, mount_dir)
         end
       end)
     else
+      log.line("handler", "changing dir to" .. mount_dir)
       utils.change_directory(mount_dir)
+      log.line("handler", "changed dir to" .. mount_dir)
     end
   end
 
