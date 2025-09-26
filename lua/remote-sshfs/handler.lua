@@ -48,9 +48,7 @@ M.authenticated_handler = function(host, mount_dir)
       end)
     else
       log.line("handler", "changing dir to" .. mount_dir)
-      vim.defer_fn(
-        utils.change_directory(mount_dir),
-        500)
+      utils.change_directory(mount_dir)
       log.line("handler", "changed dir to" .. mount_dir)
     end
   end
