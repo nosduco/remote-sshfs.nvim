@@ -118,6 +118,11 @@ M.mount_host = function(host, mount_dir, ask_pass)
     table.insert(cmd, "-p")
     table.insert(cmd, host["Port"])
   end
+  -- ProxyJump id specified in the ssh config 
+  if host["ProxyJump"] then
+    table.insert(cmd, "-o")
+    table.insert(cmd, "ProxyJump=" .. host["ProxyJump"])
+  end
   -- Password via stdin support
   if ask_pass then
     table.insert(cmd, "-o")
