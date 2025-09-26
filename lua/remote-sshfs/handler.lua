@@ -50,6 +50,7 @@ M.authenticated_handler = function(host, mount_dir)
       log.line("handler", "changing dir to" .. mount_dir)
       utils.change_directory(mount_dir)
       log.line("handler", "changed dir to" .. mount_dir)
+      vim.cmd('edit .')
     end
   end
 
