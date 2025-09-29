@@ -300,7 +300,8 @@ M.unmount_host = function()
     mount_point = nil
     current_host = nil
     -- Clear Telescope extension cache for remote-find commands
-    pcall(require, "telescope._extensions.remote-sshfs").clear_cache()
+    require("telescope").extensions["remote-sshfs"].clear_cache()
+    utils.change_directory(vim.fn.expand("$HOME"))
   end
 end
 
