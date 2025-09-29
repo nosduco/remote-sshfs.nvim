@@ -22,7 +22,7 @@ function M.status()
     return ""
   end
 
-  local host_tbl = conn.get_current_host and conn.get_current_host() or nil
+  local host_tbl = conn.get_current_host and conn.get_current_host() or nil -- I think the or nil here does not influence the conditional either 
   local name = "remote"
   if host_tbl and type(host_tbl) == "table" then
     -- Prefer the explicit entries we create while parsing the ssh-config.
