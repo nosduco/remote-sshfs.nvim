@@ -145,7 +145,7 @@ M.parse_host_from_command = function(command)
 end
 
 --- Change the working directory of the Vim instance
---- @param path string 
+--- @param path string
 M.change_directory = function(path)
   local ok, err = pcall(vim.api.nvim_set_current_dir, path)
   if not ok then
