@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.7.2...v0.8.0) (2025-09-30)
+
+
+### Features
+
+* add ability to set Path option in .sshconfig ([#58](https://github.com/nosduco/remote-sshfs.nvim/issues/58)) ([0950e86](https://github.com/nosduco/remote-sshfs.nvim/commit/0950e866212f317b3eb4726b65a4a79c36868bbc))
+
+
+### Bug Fixes
+
+* name by default instead of hostname in config parsing [#59](https://github.com/nosduco/remote-sshfs.nvim/issues/59) ([62e3921](https://github.com/nosduco/remote-sshfs.nvim/commit/62e39217263ba03d95628614cb607aa4d3c21b91))
+
 ## [0.7.2](https://github.com/nosduco/remote-sshfs.nvim/compare/v0.7.1...v0.7.2) (2025-08-20)
 
 
