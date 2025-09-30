@@ -95,8 +95,8 @@ M.mount_host = function(host, mount_dir, ask_pass)
     return
   end
   -- Setup new connection
-  -- Determine actual remote hostname (honoring HostName overrides)
-  local target_host = host["HostName"] or host["Name"]
+  -- Use SSH config alias name to ensure SSH config resolution works
+  local target_host = host["Name"] or host["HostName"]
 
   -- Build SSHFS command as argument list to avoid shell quoting issues
   local cmd = { "sshfs" }
