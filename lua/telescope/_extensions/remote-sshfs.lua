@@ -6,7 +6,7 @@ local ns_previewer = vim.api.nvim_create_namespace "telescope.previewers"
 
 -- Build virtualized host file from parsed hosts from plugin
 local function build_host_preview(hosts, name)
-  if name == "" or nil then
+  if not name and name == "" then
     return {}
   end
 

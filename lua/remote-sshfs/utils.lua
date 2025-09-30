@@ -151,10 +151,16 @@ M.parse_host_from_command = function(command)
   return host
 end
 
+--- Change the working directory of the Vim instance
+--- @param path string
 M.change_directory = function(path)
-  -- Change the working directory of the Vim instance
-  vim.fn.execute("cd " .. path)
-  vim.notify("Directory changed to " .. path)
+  local ok, err = pcall(vim.api.nvim_set_current_dir, path)
+  if not ok then
+    vim.notify("Failed to change directory: " .. tostring(err), vim.log.levels.ERROR)
+  else
+    vim.cmd("edit .")
+    vim.notify("Directory changed to " .. path)
+  end
 end
 
 -- CallbackList class
