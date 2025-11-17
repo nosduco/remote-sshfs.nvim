@@ -173,6 +173,19 @@ With this plugin you can:
 To learn more about SSH configs and how to write/style one you can read more [here](https://linuxize.com/post/using-the-ssh-config-file/)
 
 
+### Custom `Path` Option
+
+`Path` is **not** a valid OpenSSH option — adding it directly to `~/.ssh/config` will fail.  
+Instead, store it as a comment so SSH ignores it but the plugin can read it:
+
+```sshconfig
+Host my-alias
+    HostName example.com
+    User myuser
+    # Path=/home/myuser/projects
+```
+
+
 ### 🔔 Callback
 
 You can manage callbacks on events like `on_connect_success` using the following methods:

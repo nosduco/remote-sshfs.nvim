@@ -55,6 +55,13 @@ M.parse_hosts_from_configs = function(ssh_configs)
     local current_config = vim.fn.expand(path)
     if vim.fn.filereadable(current_config) == 1 then
       for line in io.lines(current_config) do
+        -- Check for our custom Path comment
+        local path_value = line:match "^%s*#%s*Path=(.+)$"
+        if path_value and #current_hosts > 0 then
+          for _, host in ipairs(current_hosts) do
+            hosts[host]["Path"] = path_value
+          end
+        end
         -- Ignore comments and empty lines
         if line:sub(1, 1) ~= "#" and line:match "%S" then
           -- Check if the line is a Host entry
