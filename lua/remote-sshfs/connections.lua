@@ -12,6 +12,7 @@ local sshfs_args = {}
 local sshfs_job_id = nil
 local mount_point = nil
 local current_host = nil
+local original_dir = nil
 
 local M = {}
 
@@ -53,6 +54,8 @@ M.reload = function()
 end
 
 M.connect = function(host)
+  -- Store original directory
+  original_dir = vim.fn.getcwd()
   -- Initialize host variables
   local remote_host = host["Name"]
   if config.ui.confirm.connect then
@@ -296,11 +299,19 @@ M.unmount_host = function()
       -- Fallback to generic umount
       vim.fn.system { "umount", target }
     end
+    -- restore original directory
+    if original_dir and vim.fn.isdirectory(original_dir) then
+      utils.change_directory(original_dir)
+    end
     sshfs_job_id = nil
     mount_point = nil
     current_host = nil
+    original_dir = nil
     -- Clear Telescope extension cache for remote-find commands
-    pcall(require, "telescope._extensions.remote-sshfs").clear_cache()
+    local ok, ext = pcall(require, "telescope._extensions.remote-sshfs")
+    if ok and ext.clear_cache then
+      ext.clear_cache()
+    end
   end
 end
 
