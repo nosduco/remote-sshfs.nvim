@@ -299,8 +299,13 @@ M.unmount_host = function()
     sshfs_job_id = nil
     mount_point = nil
     current_host = nil
-    -- Clear Telescope extension cache for remote-find commands
-    pcall(require, "telescope._extensions.remote-sshfs").clear_cache()
+    -- Clear cached remote-find commands
+    pcall(function()
+      require("telescope._extensions.remote-sshfs").clear_cache()
+    end)
+    pcall(function()
+      require("remote-sshfs.pickers.snacks").clear_cache()
+    end)
   end
 end
 
