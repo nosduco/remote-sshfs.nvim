@@ -55,16 +55,18 @@ M.callback = {
 }
 
 --- Resolve the picker backend to use.
---- Returns "telescope" or "snacks".
+--- Returns "telescope", "snacks", or "fzf-lua".
 local function resolve_picker()
   local picker = M.config and M.config.ui and M.config.ui.picker
   if picker then
     return picker
   end
 
-  -- Auto-detect: prefer snacks if available, fall back to telescope
+  -- Auto-detect: prefer snacks, then fzf-lua, then telescope
   if pcall(require, "snacks") then
     return "snacks"
+  elseif pcall(require, "fzf-lua") then
+    return "fzf-lua"
   elseif pcall(require, "telescope") then
     return "telescope"
   end
@@ -79,16 +81,11 @@ local function picker_action(action, opts)
   local backend = resolve_picker()
 
   if backend == "snacks" then
-    local snacks_pickers = require "remote-sshfs.pickers.snacks"
-    snacks_pickers[action](opts)
+    require("remote-sshfs.pickers.snacks")[action](opts)
+  elseif backend == "fzf-lua" then
+    require("remote-sshfs.pickers.fzf-lua")[action](opts)
   else
-    local telescope_map = {
-      connect = "connect",
-      edit = "edit",
-      find_files = "find_files",
-      live_grep = "live_grep",
-    }
-    require("telescope").extensions["remote-sshfs"][telescope_map[action]](opts)
+    require("telescope").extensions["remote-sshfs"][action](opts)
   end
 end
 

@@ -299,13 +299,10 @@ M.unmount_host = function()
     sshfs_job_id = nil
     mount_point = nil
     current_host = nil
-    -- Clear cached remote-find commands
-    pcall(function()
-      require("telescope._extensions.remote-sshfs").clear_cache()
-    end)
-    pcall(function()
-      require("remote-sshfs.pickers.snacks").clear_cache()
-    end)
+    -- Clear cached remote-find commands for all picker backends
+    pcall(function() require("telescope._extensions.remote-sshfs").clear_cache() end)
+    pcall(function() require("remote-sshfs.pickers.snacks").clear_cache() end)
+    pcall(function() require("remote-sshfs.pickers.fzf-lua").clear_cache() end)
   end
 end
 

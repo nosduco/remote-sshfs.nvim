@@ -18,7 +18,10 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-ss
 ### Neovim
 
 - Neovim >= 0.7.0 **(latest version recommended)**
-- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim): live grep, find files, and host selector/editor functionality
+- One of the following picker backends:
+  - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
+  - [snacks.nvim](https://github.com/folke/snacks.nvim) (picker module)
+  - [fzf-lua](https://github.com/ibhagwan/fzf-lua)
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim): lua function library
 
 ### Local Machine
@@ -38,25 +41,36 @@ Explore, edit, and develop on a remote machine via SSHFS with Neovim. `remote-ss
 Install using your favorite package manager
 
 ```lua
-// Using lazy.nvim
+-- Using lazy.nvim (with telescope)
 return {
   "nosduco/remote-sshfs.nvim",
   dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
-  opts = {
-    -- Refer to the configuration section below
-    -- or leave empty for defaults
-  },
+  opts = {},
+}
+
+-- Using lazy.nvim (with snacks.nvim)
+return {
+  "nosduco/remote-sshfs.nvim",
+  dependencies = { "folke/snacks.nvim", "nvim-lua/plenary.nvim" },
+  opts = { ui = { picker = "snacks" } },
+}
+
+-- Using lazy.nvim (with fzf-lua)
+return {
+  "nosduco/remote-sshfs.nvim",
+  dependencies = { "ibhagwan/fzf-lua", "nvim-lua/plenary.nvim" },
+  opts = { ui = { picker = "fzf-lua" } },
 }
 ```
 
-Load the extension with telescope
+If using telescope, load the extension:
 
 ```lua
 require('telescope').load_extension 'remote-sshfs'
 ```
 
 *Try the command `:RemoteSSHFSConnect`
-  to see if `remote-sshfs.nvim` is installed and configured corrected*
+  to see if `remote-sshfs.nvim` is installed and configured correctly*
 
 ## ⚙️ Configuration
 
@@ -92,6 +106,7 @@ require('remote-sshfs').setup{
     on_edit = {}, -- not yet implemented
   },
   ui = {
+    picker = nil, -- picker backend: "telescope", "snacks", or "fzf-lua" (nil = auto-detect)
     select_prompts = false, -- not yet implemented
     confirm = {
       connect = true, -- prompt y/n when host is selected to connect to
@@ -125,9 +140,9 @@ require('remote-sshfs').setup{
 
 **`:RemoteSSHFSEdit`**: Use this command to open the ssh config picker to open and edit ssh configs
 
-**`:RemoteSSHFSFindFiles`**: Use this command to initiate a telescope find files window which operates completely remotely via SSH and will open buffers referencing to your local mount.
+**`:RemoteSSHFSFindFiles`**: Use this command to initiate a find files picker which operates completely remotely via SSH and will open buffers referencing to your local mount.
 
-**`:RemoteSSHFSLiveGrep`**: Use this command to initiate a telescope live grep window which operates completely remotely via SSH and will open buffers referencing to your local mount.
+**`:RemoteSSHFSLiveGrep`**: Use this command to initiate a live grep picker which operates completely remotely via SSH and will open buffers referencing to your local mount.
 
 ### Keybinds
 
@@ -140,23 +155,21 @@ local api = require('remote-sshfs.api')
 vim.keymap.set('n', '<leader>rc', api.connect, {})
 vim.keymap.set('n', '<leader>rd', api.disconnect, {})
 vim.keymap.set('n', '<leader>re', api.edit, {})
+```
 
--- (optional) Override telescope find_files and live_grep to make dynamic based on if connected to host
-local builtin = require("telescope.builtin")
+Optionally, override find_files and live_grep to switch between local and remote automatically:
+
+```lua
 local connections = require("remote-sshfs.connections")
+
+-- Works with any picker backend (telescope, snacks, or fzf-lua)
 vim.keymap.set("n", "<leader>ff", function()
- if connections.is_connected() then
-  api.find_files()
- else
-  builtin.find_files()
- end
-end, {})
-vim.keymap.set("n", "<leader>fg", function()
- if connections.is_connected() then
-  api.live_grep()
- else
-  builtin.live_grep()
- end
+  if connections.is_connected() then
+    api.find_files()
+  else
+    -- Replace with your preferred local picker call
+    vim.cmd("Telescope find_files") -- or Snacks.picker.files() or fzf-lua.files()
+  end
 end, {})
 ```
 
