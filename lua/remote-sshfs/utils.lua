@@ -75,7 +75,7 @@ M.parse_hosts_from_configs = function(ssh_configs)
           else
             -- If the line is not a Host entry, but there are current hosts, add the line to their attributes
             if #current_hosts > 0 then
-              local key, value = line:match "^%s*(%S+)%s+(.+)$"
+              local key, value = line:match "^%s*(%S+)%s+(.-)%s*$"
               if key and value then
                 for _, host in ipairs(current_hosts) do
                   hosts[host][key] = value

@@ -165,9 +165,17 @@ M.mount_host = function(host, mount_dir, ask_pass)
       return
     end
 
-    -- Parse the first key to get its fingerprint
-    local first_key_line = vim.split(scan_result, "\n")[1]
-    if not first_key_line or first_key_line == "" then
+    -- Parse the first non-comment, non-empty key line to get its fingerprint.
+    -- ssh-keyscan emits "# host:port SSH-version" banner lines to stdout,
+    -- so we skip them rather than feeding them to ssh-keygen -lf.
+    local first_key_line
+    for _, line in ipairs(vim.split(scan_result, "\n")) do
+      if line ~= "" and line:sub(1, 1) ~= "#" then
+        first_key_line = line
+        break
+      end
+    end
+    if not first_key_line then
       vim.notify("No valid host keys found for " .. hostname, vim.log.levels.ERROR)
       return
     end
