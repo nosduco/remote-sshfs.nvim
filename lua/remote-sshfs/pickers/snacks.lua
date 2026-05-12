@@ -92,6 +92,7 @@ function M.connect(opts)
         return
       end
       local lines = build_host_preview(hosts, ctx.item.name)
+      vim.bo[ctx.buf].modifiable = true -- avoid Snacks.nvim tossing an error due to the buffer being readonly
       vim.api.nvim_buf_set_lines(ctx.buf, 0, -1, false, lines)
       vim.bo[ctx.buf].filetype = "sshconfig"
       return true
@@ -138,6 +139,7 @@ function M.edit(opts)
         return
       end
 
+      vim.bo[ctx.buf].modifiable = true -- avoid Snacks.nvim tossing an error due to the buffer being readonly
       vim.api.nvim_buf_set_lines(ctx.buf, 0, -1, false, lines)
       vim.bo[ctx.buf].filetype = "sshconfig"
       return true
